@@ -39,7 +39,7 @@
     async function buscarEvento() {
         const claveIngresada = document.getElementById('codigoInput').value.trim();
         // --- PEGA AQUÍ TU ENLACE CSV ---
-        const urlCSV = 'TU_ENLACE_DE_PUBLICACION_CSV_AQUI'; 
+        const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6QE8rXS-ZvxnU8duyC63A7ukvKlQJzc9bkKpKv1gvZyEhw0G0zAdxxZC2ZrjGwg/pub?gid=982808362&single=true&output=csv'; 
         
         try {
             const respuesta = await fetch(urlCSV);
