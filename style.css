@@ -1,32 +1,35 @@
 body {
-    background-color: #000;
-    color: #fff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh;
     margin: 0;
+    padding: 0;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #000;
+    background-image: url('logo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
 }
 
 .container {
-    background: #1a1a1a; /* Gris oscuro para el formulario */
+    background: rgba(26, 26, 26, 0.9); /* Un toque de transparencia para que se vea mejor sobre la imagen */
     padding: 40px;
     border-radius: 15px;
-    border: 1px solid #ffcc00; /* Borde amarillo maíz de tu marca */
-    box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+    border: 1px solid #ffcc00;
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
     text-align: center;
 }
 
 input {
+    display: block;
+    margin: 0 auto 15px auto;
     padding: 12px;
-    width: 280px;
+    width: 250px;
     border: none;
     border-radius: 5px;
-    margin-bottom: 15px;
     font-size: 16px;
 }
 
