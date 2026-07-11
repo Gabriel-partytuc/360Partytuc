@@ -2,7 +2,7 @@ body {
     background-color: #000; /* Fondo negro */
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url('logo\ grande.jpg'); /* Asegúrate de que el nombre coincida con tu archivo */
+    background-image: url('logo_grande.jpg'); /* Asegúrate de que el nombre coincida con tu archivo */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
