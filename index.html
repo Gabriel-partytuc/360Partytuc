@@ -8,12 +8,29 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Bienvenidos a 360 Party</h1>
-        <p>Hacemos que tu evento sea una experiencia visual unica.</p>
-        <input type="text" placeholder="Ingresa tu nombre">
-        <button>Comenzar experiencia</button>
-    </div>
+<div class="card" onclick="abrirModal()">
+    <h3>Descarga tu contenido</h3>
+</div>
 
+<div id="modalDescarga" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <h2>Centro de Descargas 360° Party</h2>
+        <p>Por tu seguridad, tu contenido está protegido. <br>
+           Tus videos estarán disponibles durante 90 días en la plataforma y 6 meses en nuestro respaldo local.</p>
+        
+        <input type="text" id="codigoInput" placeholder="Ingresa tu clave única">
+        <button onclick="buscarEvento()">ACCEDER</button>
+    </div>
+</div>
+function abrirModal() { document.getElementById('modalDescarga').style.display = "block"; }
+function cerrarModal() { document.getElementById('modalDescarga').style.display = "none"; }
+
+async function buscarEvento() {
+    const clave = document.getElementById('codigoInput').value;
+    const urlCSV = 'TU_ENLACE_DE_PUBLICACION_CSV_AQUI'; // Pega aquí el enlace que copiaste de Google Sheets
+    
+    const respuesta = await fetch(urlCSV);
+    const datos = await respuesta.text();
 </body>
 </html>
