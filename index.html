@@ -8,10 +8,12 @@
 </head>
 <body>
 
+<!-- Tu tarjeta de descarga -->
 <div class="card" onclick="abrirModal()">
     <h3>Descarga tu contenido</h3>
 </div>
 
+<!-- El Modal -->
 <div id="modalDescarga" class="modal">
     <div class="modal-content">
         <span class="close" onclick="cerrarModal()">&times;</span>
@@ -23,14 +25,48 @@
         <button onclick="buscarEvento()">ACCEDER</button>
     </div>
 </div>
-function abrirModal() { document.getElementById('modalDescarga').style.display = "block"; }
-function cerrarModal() { document.getElementById('modalDescarga').style.display = "none"; }
 
-async function buscarEvento() {
-    const clave = document.getElementById('codigoInput').value;
-    const urlCSV = 'TU_ENLACE_DE_PUBLICACION_CSV_AQUI'; // Pega aquí el enlace que copiaste de Google Sheets
-    
-    const respuesta = await fetch(urlCSV);
-    const datos = await respuesta.text();
+<!-- AQUÍ VA EL CÓDIGO FUNCIONAL -->
+<script>
+    function abrirModal() { 
+        document.getElementById('modalDescarga').style.display = "block"; 
+    }
+
+    function cerrarModal() { 
+        document.getElementById('modalDescarga').style.display = "none"; 
+    }
+
+    async function buscarEvento() {
+        const claveIngresada = document.getElementById('codigoInput').value.trim();
+        // --- PEGA AQUÍ TU ENLACE CSV ---
+        const urlCSV = 'TU_ENLACE_DE_PUBLICACION_CSV_AQUI'; 
+        
+        try {
+            const respuesta = await fetch(urlCSV);
+            const csvTexto = await respuesta.text();
+            const filas = csvTexto.split('\n');
+            
+            let enlaceEncontrado = null;
+
+            for (let i = 1; i < filas.length; i++) {
+                const columnas = filas[i].split(',');
+                if (columnas[0].trim() === claveIngresada) {
+                    enlaceEncontrado = columnas[3]; // Columna 4: Enlace_Drive
+                    break;
+                }
+            }
+
+            if (enlaceEncontrado) {
+                window.open(enlaceEncontrado.trim(), '_blank');
+            } else {
+                alert("Clave no encontrada. Por favor, verifica el código.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al conectar con la base de datos.");
+        }
+    }
+</script>
+
 </body>
 </html>
