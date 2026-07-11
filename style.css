@@ -1,8 +1,8 @@
 body {
-    background-color: #000; /* Fondo negro */
+    background-color: #000;
     color: #fff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url('logo_grande.jpg'); /* Asegúrate de que el nombre coincida con tu archivo */
+    background-image: url('logo_grande.jpg'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -11,8 +11,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
 }
 
 .container {
