@@ -26,7 +26,6 @@
     </div>
 </div>
 
-<!-- AQUÍ VA EL CÓDIGO FUNCIONAL -->
 <script>
     function abrirModal() { 
         document.getElementById('modalDescarga').style.display = "block"; 
@@ -38,7 +37,6 @@
 
     async function buscarEvento() {
         const claveIngresada = document.getElementById('codigoInput').value.trim();
-        // --- PEGA AQUÍ TU ENLACE CSV ---
         const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6QE8rXS-ZvxnU8duyC63A7ukvKlQJzc9bkKpKv1gvZyEhw0G0zAdxxZC2ZrjGwg/pub?gid=982808362&single=true&output=csv'; 
         
         try {
@@ -49,9 +47,15 @@
             let enlaceEncontrado = null;
 
             for (let i = 1; i < filas.length; i++) {
-                const columnas = filas[i].split(',');
+                // El código prueba ambos separadores: coma o punto y coma
+                let columnas = filas[i].split(',');
+                if (columnas.length < 2) {
+                    columnas = filas[i].split(';');
+                }
+                
+                // Compara la columna 0 (clave) con lo ingresado
                 if (columnas[0].trim() === claveIngresada) {
-                    enlaceEncontrado = columnas[3]; // Columna 4: Enlace_Drive
+                    enlaceEncontrado = columnas[3]; // Columna 4 (Enlace_Drive)
                     break;
                 }
             }
