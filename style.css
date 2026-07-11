@@ -1,0 +1,49 @@
+body {
+    background-color: #000; /* Fondo negro */
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('logo\ grande.jpg'); /* Asegúrate de que el nombre coincida con tu archivo */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #1a1a1a; /* Gris oscuro para el formulario */
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid #ffcc00; /* Borde amarillo maíz de tu marca */
+    box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+    text-align: center;
+}
+
+input {
+    padding: 12px;
+    width: 280px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 25px;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
