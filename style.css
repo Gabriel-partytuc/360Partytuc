@@ -7,7 +7,7 @@ body {
     align-items: center;
     background-color: #000;
     background-image: url('logo.jpg');
-    background-size: cover;
+    background-size: 60% ;
     background-position: center;
     background-repeat: no-repeat;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
