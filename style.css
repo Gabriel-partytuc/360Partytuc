@@ -1,94 +1,43 @@
-bbody {
-    background-color: #121212; /* Fondo oscuro */
-    color: #ffffff;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 20px;
+body {
+    background-color: #121212;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    margin: 0;
+    color: #fff;
+    font-family: Arial, sans-serif;
 }
 
-/* --- Estilos de la Tarjeta --- */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    max-width: 900px;
+}
+
 .card {
-    background-color: #1e1e1e;
-    border: 2px solid #ff00ff; /* Color Neón */
+    background: #1e1e1e;
+    border: 2px solid #ff00ff;
+    padding: 40px 20px;
+    text-align: center;
     border-radius: 15px;
-    padding: 30px;
-    text-align: center;
     cursor: pointer;
-    transition: transform 0.3s, border-color 0.3s;
-    width: 250px;
-}
-
-.card:hover {
-    transform: scale(1.05);
-    border-color: #ffff00; /* Amarillo maíz en hover */
-}
-
-/* --- Estilos del Modal (La Ventana Emergente) --- */
-.modal {
-    display: none; 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.85); /* Fondo oscuro semitransparente */
-    z-index: 1000;
-}
-
-.modal-content {
-    background: #1a1a1a;
-    color: #ffffff;
-    margin: 10% auto;
-    padding: 30px;
-    width: 90%;
-    max-width: 500px;
-    text-align: center;
-    border: 3px solid #ff00ff; /* Borde estilo neón */
-    border-radius: 15px;
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    color: #ffffff;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #ffff00;
-}
-
-/* --- Estilos de Formulario en Modal --- */
-#codigoInput {
-    width: 80%;
-    padding: 12px;
-    margin: 20px 0;
-    border-radius: 5px;
-    border: 1px solid #444;
-    background: #000;
-    color: #fff;
-    text-align: center;
-}
-
-button {
-    background-color: #ffff00; /* Botón Amarillo */
-    color: #000;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 5px;
     font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
+    transition: 0.3s;
 }
 
-button:hover {
-    background-color: #ff00ff; /* Cambio a Rosa Neón */
-    color: #fff;
+.card:hover { border-color: #ffff00; }
+
+/* El cuadro central destacado */
+.card.highlight {
+    background: #ffff00;
+    color: #000;
+    border: 2px solid #fff;
+    font-size: 1.2em;
 }
+
+/* Estilos del Modal igual que antes */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
+.modal-content { background: #1a1a1a; margin: 15% auto; padding: 20px; width: 300px; text-align: center; border: 2px solid #ff00ff; border-radius: 15px; }
