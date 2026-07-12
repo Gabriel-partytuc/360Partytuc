@@ -2,36 +2,61 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>360° Party - Inicio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>360° Party - Tucumán</title>
+    <style>
+        body { background: url('logo.jpg') no-repeat center center fixed; background-size: cover; margin: 0; font-family: sans-serif; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 15px; max-width: 900px; }
+        .card { background: #1e1e1e; border: 2px solid #ff00ff; padding: 20px; text-align: center; cursor: pointer; border-radius: 10px; font-weight: bold; }
+        .card:hover { border-color: #ffff00; }
+        .highlight { background: #ffff00; color: black; }
+        /* Modal */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); overflow-y: auto; }
+        .modal-content { background: #1a1a1a; margin: 5% auto; padding: 30px; width: 80%; max-width: 600px; border: 2px solid #ff00ff; border-radius: 15px; position: relative; }
+        .close { cursor:pointer; position: absolute; right: 20px; top: 10px; font-size: 30px; }
+    </style>
 </head>
 <body>
 
 <div class="grid-container">
-    <div class="card">PLATAFORMA 360</div>
-    <div class="card">Cabina led + Video Tun</div>
-    <div class="card">Selfie point</div>
-    
-    <div class="card">Ventilador Holografico</div>
-    <div class="card highlight">Contratar</div>
-    <div class="card">Grupo Electrogeno</div>
-    
-    <div class="card">Tecnologia de Video</div>
-    <div class="card">Comercios Amigos</div>
-    <div class="card" onclick="abrirModal()">Descarga tu contenido</div>
+    <div class="card" onclick="abrir('m1')">PLATAFORMA 360</div>
+    <div class="card" onclick="abrir('m2')">CABINA LED</div>
+    <div class="card" onclick="abrir('m3')">SELFIE POINT</div>
+    <div class="card" onclick="abrir('m4')">VENTILADOR HOLOGRÁFICO</div>
+    <div class="card highlight" onclick="abrir('m5')">CONTRATAR</div>
+    <div class="card" onclick="abrir('m6')">GRUPO ELECTRÓGENO</div>
+    <div class="card" onclick="abrir('m7')">TECNOLOGÍA DE VIDEO</div>
+    <div class="card" onclick="abrir('m8')">COMERCIOS AMIGOS</div>
+    <div class="card" onclick="abrir('m9')">DESCARGA TU CONTENIDO</div>
 </div>
 
-<!-- Modal de Descarga -->
-<div id="modalDescarga" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="cerrarModal()">&times;</span>
-        <h2>Centro de Descargas 360° Party</h2>
-        <input type="text" id="codigoInput" placeholder="Ingresa tu clave única">
-        <button onclick="buscarEvento()">ACCEDER</button>
-    </div>
-</div>
+<!-- Ventanas Modales -->
+<div id="m1" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m1')">&times;</span><h2>Plataforma 360</h2><p>Plataforma de 1.10m, soporta hasta 200kg (4 personas). Velocidad regulable. Incluye aros LED inalámbricos y cámaras GoPro 4K. ¡Súbete y disfruta!</p></div></div>
+<div id="m2" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m2')">&times;</span><h2>Cabina LED</h2><p>Modulo espejado de 1x1m por 2m de altura con tiras LED audiorítmicas. Incluye Video Tun para efectos inmersivos únicos.</p></div></div>
+<div id="m3" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m3')">&times;</span><h2>Selfie Point</h2><p>Fondos temáticos en tela para tus eventos. Elige entre 1, 2 o 3 imágenes para crear el ambiente perfecto.</p></div></div>
+<div id="m4" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m4')">&times;</span><h2>Ventilador Holográfico</h2><p>Efectos 3D impactantes. ¡Ideal para noche! Complementario a Plataforma o Cabina.</p></div></div>
+<div id="m5" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m5')">&times;</span><h2>Contratar</h2><p><a href="TU_LINK_WSP">1. Bot de WhatsApp</a><br><a href="TU_LINK_FORM">2. Formulario de Contratación</a><br><a href="TU_LINK_PAGO">3. Botón de Pago</a></p></div></div>
+<div id="m6" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m6')">&times;</span><h2>Grupo Electrógeno</h2><p>Contamos con generadores para eventos al aire libre. Servicio con costo adicional.</p></div></div>
+<div id="m7" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m7')">&times;</span><h2>Tecnología de Video</h2><p>Usamos GoPro Hero 7 Silver y Hero 12 Black. Calidad garantizada.</p></div></div>
+<div id="m8" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m8')">&times;</span><h2>Comercios Amigos</h2><p>¡Obtén un 20% de descuento presentando el folleto sellado de nuestros comercios aliados!</p></div></div>
+<div id="m9" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m9')">&times;</span><h2>Centro de Descargas</h2><input type="text" id="codigoInput" placeholder="Clave única"><button onclick="buscarEvento()">ACCEDER</button></div></div>
 
-<script src="script.js"></script>
+<script>
+    function abrir(id) { document.getElementById(id).style.display = "block"; }
+    function cerrar(id) { document.getElementById(id).style.display = "none"; }
+    
+    async function buscarEvento() {
+        const clave = document.getElementById('codigoInput').value.trim();
+        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6QE8rXS-ZvxnU8duyC63A7ukvKlQJzc9bkKpKv1gvZyEhw0G0zAdxxZC2ZrjGwg/pub?gid=982808362&single=true&output=csv';
+        const res = await fetch(url);
+        const data = await res.text();
+        const filas = data.split('\n');
+        for (let i = 1; i < filas.length; i++) {
+            let col = filas[i].split(',');
+            if (col.length < 2) col = filas[i].split(';');
+            if (col[0].trim() === clave) { window.open(col[3].trim(), '_blank'); return; }
+        }
+        alert("Clave no encontrada");
+    }
+</script>
 </body>
 </html>
