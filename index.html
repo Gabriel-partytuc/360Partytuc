@@ -5,66 +5,48 @@
     <title>360° Party</title>
     <style>
         body { 
-            background: url('logo.jpg') no-repeat center center fixed; 
+            /* Si logo.jpg no está en la misma carpeta, esto fallará, pero el resto funcionará */
+            background: #121212 url('logo.jpg') no-repeat center center fixed; 
             background-size: cover; 
-            margin: 0; 
-            font-family: sans-serif; 
-            color: white; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
+            margin: 0; font-family: sans-serif; color: white; 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; 
         }
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 15px; 
-            background: rgba(0,0,0,0.7); 
-            padding: 20px; 
-            border-radius: 15px; 
-            max-width: 900px; 
-        }
-        .card { 
-            background: #1e1e1e; 
-            border: 2px solid #ff00ff; 
-            padding: 20px; 
-            text-align: center; 
-            cursor: pointer; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            transition: 0.2s;
-        }
+        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 15px; max-width: 900px; }
+        .card { background: #1e1e1e; border: 2px solid #ff00ff; padding: 20px; text-align: center; cursor: pointer; border-radius: 10px; font-weight: bold; }
         .card:hover { border-color: #ffff00; }
         .highlight { background: #ffff00; color: black; }
-        
-        /* Modal - Corregido para que aparezca por encima de todo */
         .modal { display: none; position: fixed; z-index: 1000; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: #1a1a1a; margin: 5% auto; padding: 30px; width: 80%; max-width: 600px; border: 2px solid #ff00ff; border-radius: 15px; position: relative; }
+        .modal-content { background: #1a1a1a; margin: 10% auto; padding: 30px; width: 80%; max-width: 600px; border: 2px solid #ff00ff; border-radius: 15px; position: relative; }
         .close { cursor:pointer; position: absolute; right: 20px; top: 10px; font-size: 30px; }
     </style>
 </head>
 <body>
 
 <div class="grid-container">
-    <div class="card" onclick="abrir('m1')">PLATAFORMA 360</div>
-    <div class="card" onclick="abrir('m2')">CABINA LED</div>
-    <div class="card" onclick="abrir('m3')">SELFIE POINT</div>
-    <div class="card" onclick="abrir('m4')">VENTILADOR HOLOGRÁFICO</div>
-    <div class="card highlight" onclick="abrir('m5')">CONTRATAR</div>
-    <div class="card" onclick="abrir('m6')">GRUPO ELECTRÓGENO</div>
-    <div class="card" onclick="abrir('m7')">TECNOLOGÍA DE VIDEO</div>
-    <div class="card" onclick="abrir('m8')">COMERCIOS AMIGOS</div>
-    <div class="card" onclick="abrir('m9')">DESCARGA TU CONTENIDO</div>
+    <div class="card" onclick="alert('Plataforma: 1.10m, hasta 200kg, 4 personas, 4K GoPro')">PLATAFORMA 360</div>
+    <div class="card" onclick="alert('Cabina LED: 1x1m, 2m altura, efectos inmersivos')">CABINA LED</div>
+    <div class="card" onclick="alert('Selfie point: Fondos temáticos en tela')">SELFIE POINT</div>
+    <div class="card" onclick="alert('Ventilador Holográfico: Efectos 3D impactantes')">VENTILADOR HOLOGRÁFICO</div>
+    <div class="card highlight" onclick="alert('Contratar: WhatsApp, Formulario y Pagos')">CONTRATAR</div>
+    <div class="card" onclick="alert('Grupo Electrógeno: Para eventos al aire libre')">GRUPO ELECTRÓGENO</div>
+    <div class="card" onclick="alert('Tecnología: GoPro Hero 7 Silver y Hero 12 Black')">TECNOLOGÍA DE VIDEO</div>
+    <div class="card" onclick="alert('Comercios Amigos: 20% descuento')">COMERCIOS AMIGOS</div>
+    <div class="card" onclick="abrirModal()">DESCARGA TU CONTENIDO</div>
 </div>
 
-<!-- Modales -->
-<div id="m1" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m1')">&times;</span><h2>Plataforma 360</h2><p>Explicación: Nuestra Plataforma es una de las grandes (1.10 m de diámetro)...</p></div></div>
-<div id="m9" class="modal"><div class="modal-content"><span class="close" onclick="cerrar('m9')">&times;</span><h2>Centro de Descargas</h2><input type="text" id="codigoInput" placeholder="Clave única"><button onclick="buscarEvento()">ACCEDER</button></div></div>
+<div id="modalDescarga" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <h2>Centro de Descargas</h2>
+        <input type="text" id="codigoInput" placeholder="Clave única">
+        <button onclick="buscarEvento()">ACCEDER</button>
+    </div>
+</div>
 
 <script>
-    function abrir(id) { document.getElementById(id).style.display = "block"; }
-    function cerrar(id) { document.getElementById(id).style.display = "none"; }
-    
+    function abrirModal() { document.getElementById('modalDescarga').style.display = "block"; }
+    function cerrarModal() { document.getElementById('modalDescarga').style.display = "none"; }
+
     async function buscarEvento() {
         const clave = document.getElementById('codigoInput').value.trim();
         const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6QE8rXS-ZvxnU8duyC63A7ukvKlQJzc9bkKpKv1gvZyEhw0G0zAdxxZC2ZrjGwg/pub?gid=982808362&single=true&output=csv';
