@@ -3,74 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>360° Party</title>
+    <title>360° Party - Inicio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Tu tarjeta de descarga -->
-<div class="card" onclick="abrirModal()">
-    <h3>Descarga tu contenido</h3>
+<div class="grid-container">
+    <div class="card">PLATAFORMA 360</div>
+    <div class="card">Cabina led + Video Tun</div>
+    <div class="card">Selfie point</div>
+    
+    <div class="card">Ventilador Holografico</div>
+    <div class="card highlight">Contratar</div>
+    <div class="card">Grupo Electrogeno</div>
+    
+    <div class="card">Tecnologia de Video</div>
+    <div class="card">Comercios Amigos</div>
+    <div class="card" onclick="abrirModal()">Descarga tu contenido</div>
 </div>
 
-<!-- El Modal -->
+<!-- Modal de Descarga -->
 <div id="modalDescarga" class="modal">
     <div class="modal-content">
         <span class="close" onclick="cerrarModal()">&times;</span>
         <h2>Centro de Descargas 360° Party</h2>
-        <p>Por tu seguridad, tu contenido está protegido. <br>
-           Tus videos estarán disponibles durante 90 días en la plataforma y 6 meses en nuestro respaldo local.</p>
-        
         <input type="text" id="codigoInput" placeholder="Ingresa tu clave única">
         <button onclick="buscarEvento()">ACCEDER</button>
     </div>
 </div>
 
-<script>
-    function abrirModal() { 
-        document.getElementById('modalDescarga').style.display = "block"; 
-    }
-
-    function cerrarModal() { 
-        document.getElementById('modalDescarga').style.display = "none"; 
-    }
-
-    async function buscarEvento() {
-        const claveIngresada = document.getElementById('codigoInput').value.trim();
-        const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6QE8rXS-ZvxnU8duyC63A7ukvKlQJzc9bkKpKv1gvZyEhw0G0zAdxxZC2ZrjGwg/pub?gid=982808362&single=true&output=csv'; 
-        
-        try {
-            const respuesta = await fetch(urlCSV);
-            const csvTexto = await respuesta.text();
-            const filas = csvTexto.split('\n');
-            
-            let enlaceEncontrado = null;
-
-            for (let i = 1; i < filas.length; i++) {
-                // El código prueba ambos separadores: coma o punto y coma
-                let columnas = filas[i].split(',');
-                if (columnas.length < 2) {
-                    columnas = filas[i].split(';');
-                }
-                
-                // Compara la columna 0 (clave) con lo ingresado
-                if (columnas[0].trim() === claveIngresada) {
-                    enlaceEncontrado = columnas[3]; // Columna 4 (Enlace_Drive)
-                    break;
-                }
-            }
-
-            if (enlaceEncontrado) {
-                window.open(enlaceEncontrado.trim(), '_blank');
-            } else {
-                alert("Clave no encontrada. Por favor, verifica el código.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Error al conectar con la base de datos.");
-        }
-    }
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
