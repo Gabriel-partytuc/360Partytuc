@@ -1,67 +1,77 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>360° Party</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° Party - Gestión Profesional</title>
     <style>
-        body { 
-            /* Si logo.jpg no está en la misma carpeta, esto fallará, pero el resto funcionará */
-            background: #121212 url('logo.jpg') no-repeat center center fixed; 
-            background-size: cover; 
-            margin: 0; font-family: sans-serif; color: white; 
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; 
-        }
-        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 15px; max-width: 900px; }
-        .card { background: #1e1e1e; border: 2px solid #ff00ff; padding: 20px; text-align: center; cursor: pointer; border-radius: 10px; font-weight: bold; }
-        .card:hover { border-color: #ffff00; }
-        .highlight { background: #ffff00; color: black; }
-        .modal { display: none; position: fixed; z-index: 1000; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: #1a1a1a; margin: 10% auto; padding: 30px; width: 80%; max-width: 600px; border: 2px solid #ff00ff; border-radius: 15px; position: relative; }
-        .close { cursor:pointer; position: absolute; right: 20px; top: 10px; font-size: 30px; }
+        body { background: #1a1a1a; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #333; padding: 25px; border-radius: 15px; border: 1px solid #444; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: #e67e22; }
+        .seccion-comercio { background: #222; padding: 40px; margin-top: 50px; border-radius: 20px; border: 1px solid #333; }
+        .btn { padding: 12px 25px; background: #e67e22; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        input { padding: 12px; border-radius: 8px; border: none; width: 250px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div class="grid-container">
-    <div class="card" onclick="alert('Plataforma: 1.10m, hasta 200kg, 4 personas, 4K GoPro')">PLATAFORMA 360</div>
-    <div class="card" onclick="alert('Cabina LED: 1x1m, 2m altura, efectos inmersivos')">CABINA LED</div>
-    <div class="card" onclick="alert('Selfie point: Fondos temáticos en tela')">SELFIE POINT</div>
-    <div class="card" onclick="alert('Ventilador Holográfico: Efectos 3D impactantes')">VENTILADOR HOLOGRÁFICO</div>
-    <div class="card highlight" onclick="alert('Contratar: WhatsApp, Formulario y Pagos')">CONTRATAR</div>
-    <div class="card" onclick="alert('Grupo Electrógeno: Para eventos al aire libre')">GRUPO ELECTRÓGENO</div>
-    <div class="card" onclick="alert('Tecnología: GoPro Hero 7 Silver y Hero 12 Black')">TECNOLOGÍA DE VIDEO</div>
-    <div class="card" onclick="alert('Comercios Amigos: 20% descuento')">COMERCIOS AMIGOS</div>
-    <div class="card" onclick="abrirModal()">DESCARGA TU CONTENIDO</div>
-</div>
+    <h1>360° Party - Servicios</h1>
+    <div class="grid" id="contenedorServicios"></div>
 
-<div id="modalDescarga" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="cerrarModal()">&times;</span>
-        <h2>Centro de Descargas</h2>
-        <input type="text" id="codigoInput" placeholder="Clave única">
-        <button onclick="buscarEvento()">ACCEDER</button>
+    <div class="seccion-comercio">
+        <h2>Acceso Comercios Aliados</h2>
+        <input type="text" id="inputClave" placeholder="Ingresa tu clave de acceso">
+        <button class="btn" onclick="validarComercio()">Acceder a mi Material</button>
     </div>
-</div>
 
-<script>
-    function abrirModal() { document.getElementById('modalDescarga').style.display = "block"; }
-    function cerrarModal() { document.getElementById('modalDescarga').style.display = "none"; }
+    <script>
+        const urlServicios = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdDyaQ_-pJlSUU8rVmndJu4tujt6-JQMUqayWOX5TQDdR5bRc5Wbg4Er3DbrlqT9iM1fsiy8EQCfsW/pub?gid=0&single=true&output=csv";
+        const urlComercios = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdDyaQ_-pJlSUU8rVmndJu4tujt6-JQMUqayWOX5TQDdR5bRc5Wbg4Er3DbrlqT9iM1fsiy8EQCfsW/pub?gid=579430626&single=true&output=csv";
 
-    async function buscarEvento() {
-        const clave = document.getElementById('codigoInput').value.trim();
-        const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS6QE8rXS-ZvxnU8duyC63A7ukvKlQJzc9bkKpKv1gvZyEhw0G0zAdxxZC2ZrjGwg/pub?gid=982808362&single=true&output=csv';
-        try {
-            const res = await fetch(url);
+        // Función para cargar los servicios
+        async function cargarServicios() {
+            try {
+                const res = await fetch(urlServicios);
+                const data = await res.text();
+                const filas = data.split('\n').slice(1);
+                const contenedor = document.getElementById('contenedorServicios');
+
+                filas.forEach(fila => {
+                    const col = fila.split(',');
+                    if (col.length >= 3) {
+                        contenedor.innerHTML += `
+                            <div class="card">
+                                <h3>${col[0]}</h3>
+                                <p>${col[1]}</p>
+                                <button class="btn" onclick="window.open('${col[2].trim()}', '_blank')">Más Información</button>
+                            </div>`;
+                    }
+                });
+            } catch (err) {
+                console.error("Error al cargar servicios:", err);
+            }
+        }
+
+        // Función para validar comercios
+        async function validarComercio() {
+            const clave = document.getElementById("inputClave").value;
+            const res = await fetch(urlComercios);
             const data = await res.text();
             const filas = data.split('\n');
-            for (let i = 1; i < filas.length; i++) {
-                let col = filas[i].split(',');
-                if (col.length < 2) col = filas[i].split(';');
-                if (col[0].trim() === clave) { window.open(col[3].trim(), '_blank'); return; }
-            }
-            alert("Clave no encontrada");
-        } catch(e) { alert("Error de conexión"); }
-    }
-</script>
+            
+            let encontrado = false;
+            filas.forEach(fila => {
+                const col = fila.split(',');
+                if (col[0] && col[0].trim() === clave.trim()) {
+                    window.open(col[4].trim(), '_blank');
+                    encontrado = true;
+                }
+            });
+            if (!encontrado) alert("Clave no reconocida. Por favor, intenta de nuevo.");
+        }
+
+        cargarServicios();
+    </script>
 </body>
 </html>
