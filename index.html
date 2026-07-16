@@ -1,77 +1,150 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>360° Party - Gestión Profesional</title>
-    <style>
-        body { background: #1a1a1a; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; text-align: center; margin: 0; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #333; padding: 25px; border-radius: 15px; border: 1px solid #444; transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #e67e22; }
-        .seccion-comercio { background: #222; padding: 40px; margin-top: 50px; border-radius: 20px; border: 1px solid #333; }
-        .btn { padding: 12px 25px; background: #e67e22; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        input { padding: 12px; border-radius: 8px; border: none; width: 250px; text-align: center; }
-    </style>
+    <title>360 Party | Captura el movimiento</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="icon" href="img/logo.jpg">
 </head>
 <body>
+    <!-- Barra de Navegación -->
+    <header class="navegacion">
+        <div class="logo">
+            <img src="img/logo.jpg" alt="360 Party - Capture el movimiento">
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#acceso">Acceso Exclusivo</a></li>
+                <li><a href="#comercio">Comercio Amigo</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <h1>360° Party - Servicios</h1>
-    <div class="grid" id="contenedorServicios"></div>
+    <!-- Sección Inicio -->
+    <section id="inicio" class="inicio">
+        <div class="contenido-inicio">
+            <img src="img/logo.jpg" alt="360 Party" class="logo-portada">
+            <h1>360 PARTY</h1>
+            <p class="eslogan">CAPTURE EL MOVIMIENTO</p>
+            <p>Tecnología y diversión para crear recuerdos inolvidables en tu fiesta, casamiento, 15 años o evento corporativo en Tucumán y alrededores.</p>
+            <div class="botones">
+                <a href="https://wa.me/543814187925" class="boton boton-rosa" target="_blank">Solicitar Presupuesto</a>
+                <a href="#servicios" class="boton boton-celeste">Ver Servicios</a>
+            </div>
+        </div>
+    </section>
 
-    <div class="seccion-comercio">
-        <h2>Acceso Comercios Aliados</h2>
-        <input type="text" id="inputClave" placeholder="Ingresa tu clave de acceso">
-        <button class="btn" onclick="validarComercio()">Acceder a mi Material</button>
-    </div>
+    <!-- Sección Servicios -->
+    <section id="servicios" class="servicios">
+        <h2>NUESTROS SERVICIOS</h2>
+        <div class="tarjetas-servicios">
 
-    <script>
-        const urlServicios = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdDyaQ_-pJlSUU8rVmndJu4tujt6-JQMUqayWOX5TQDdR5bRc5Wbg4Er3DbrlqT9iM1fsiy8EQCfsW/pub?gid=0&single=true&output=csv";
-        const urlComercios = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdDyaQ_-pJlSUU8rVmndJu4tujt6-JQMUqayWOX5TQDdR5bRc5Wbg4Er3DbrlqT9iM1fsiy8EQCfsW/pub?gid=579430626&single=true&output=csv";
+            <!-- Plataforma 360° -->
+            <div class="tarjeta">
+                <h3>Plataforma 360°</h3>
+                <p>Transformá cada celebración en una experiencia única. Diámetro 110 cm, soporta 200 kg, velocidad regulable, aro LED RGB y cámaras GoPro profesionales.</p>
+                <div class="botones-tarjeta">
+                    <a href="https://drive.google.com/drive/folders/19vlUFDXjf9LJiPnX25cb1C7JwnTymN4P" target="_blank" class="boton-enlace">📸 Ver galería</a>
+                    <a href="#contacto" class="boton-solicitar">📩 Solicitar servicio</a>
+                </div>
+            </div>
 
-        // Función para cargar los servicios
-        async function cargarServicios() {
-            try {
-                const res = await fetch(urlServicios);
-                const data = await res.text();
-                const filas = data.split('\n').slice(1);
-                const contenedor = document.getElementById('contenedorServicios');
+            <!-- Cabina Pixel LED -->
+            <div class="tarjeta">
+                <h3>Cabina Pixel LED</h3>
+                <p>Efectos visuales únicos con 18 tiras LED independientes. Dimensiones 1x1m x 2m, capacidad 1 a 3 personas + sistema Video Tun con movimiento vertical.</p>
+                <div class="botones-tarjeta">
+                    <a href="https://drive.google.com/drive/folders/1h-NKZ7Rk8WSEstg14Dk3rHNtlb4W4kKn" target="_blank" class="boton-enlace">📸 Ver galería</a>
+                    <a href="#contacto" class="boton-solicitar">📩 Solicitar servicio</a>
+                </div>
+            </div>
 
-                filas.forEach(fila => {
-                    const col = fila.split(',');
-                    if (col.length >= 3) {
-                        contenedor.innerHTML += `
-                            <div class="card">
-                                <h3>${col[0]}</h3>
-                                <p>${col[1]}</p>
-                                <button class="btn" onclick="window.open('${col[2].trim()}', '_blank')">Más Información</button>
-                            </div>`;
-                    }
-                });
-            } catch (err) {
-                console.error("Error al cargar servicios:", err);
-            }
-        }
+            <!-- Selfie Point -->
+            <div class="tarjeta">
+                <h3>Selfie Point</h3>
+                <p>Fondos de alta calidad con diseños temáticos, paisajes o ambientaciones personalizadas. Elegí hasta 3 fondos por evento para tus fotos.</p>
+                <div class="botones-tarjeta">
+                    <a href="https://drive.google.com/drive/folders/1OL265MNO-6nLk1pmtTTTKi6NTd7qlzvx" target="_blank" class="boton-enlace">📸 Ver ejemplos</a>
+                    <a href="#contacto" class="boton-solicitar">📩 Solicitar servicio</a>
+                </div>
+            </div>
 
-        // Función para validar comercios
-        async function validarComercio() {
-            const clave = document.getElementById("inputClave").value;
-            const res = await fetch(urlComercios);
-            const data = await res.text();
-            const filas = data.split('\n');
-            
-            let encontrado = false;
-            filas.forEach(fila => {
-                const col = fila.split(',');
-                if (col[0] && col[0].trim() === clave.trim()) {
-                    window.open(col[4].trim(), '_blank');
-                    encontrado = true;
-                }
-            });
-            if (!encontrado) alert("Clave no reconocida. Por favor, intenta de nuevo.");
-        }
+            <!-- Ventilador Holográfico -->
+            <div class="tarjeta">
+                <h3>Ventilador Holográfico 3D</h3>
+                <p>Imágenes que parecen flotar en el aire. Ideal para logotipos, nombres o mensajes de bienvenida. Podés usar tu contenido o pedirnos que lo creemos.</p>
+                <div class="botones-tarjeta">
+                    <a href="https://drive.google.com/drive/folders/1uR65MSHgHKYj4hB2MK-_C5Sw6_6oyJnb" target="_blank" class="boton-enlace">📸 Ver ejemplos</a>
+                    <a href="#contacto" class="boton-solicitar">📩 Solicitar servicio</a>
+                </div>
+            </div>
 
-        cargarServicios();
-    </script>
+            <!-- Equipamiento Complementario -->
+            <div class="tarjeta">
+                <h3>Equipamiento de Confianza</h3>
+                <p>Cámaras GoPro con estabilización HyperSmooth + Generador Husqvarna para energía sin interrupciones en cualquier lugar.</p>
+                <div class="botones-tarjeta">
+                    <a href="https://drive.google.com/drive/folders/1yrsDIx65y9oHUUmJPD3N3ssCwljxgwc2" target="_blank" class="boton-enlace">📸 Ver detalles</a>
+                    <a href="#contacto" class="boton-solicitar">📩 Consultar disponibilidad</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Acceso Exclusivo -->
+    <section id="acceso" class="acceso">
+        <h2>ACCESO EXCLUSIVO</h2>
+        <p>Ingresá con tu clave única para ver tu contenido o material reservado</p>
+        <div class="botones-acceso">
+            <a href="acceso-clientes.html" class="boton boton-rosa">🔐 Ingresar Clientes</a>
+            <a href="acceso-comercio.html" class="boton boton-celeste">🔐 Ingresar Comercio Amigo</a>
+        </div>
+    </section>
+
+    <!-- Sección Comercio Amigo -->
+    <section id="comercio" class="comercio">
+        <h2>PROGRAMA COMERCIO AMIGO</h2>
+        <div class="contenido-comercio">
+            <p>Sumate gratis y ofreceles a tus clientes un <strong>20% de descuento exclusivo</strong> en todos nuestros servicios. Te entregamos afiches, folletos y cupones personalizados con tu marca.</p>
+            <ul>
+                <li>✅ Adhesión sin costo</li>
+                <li>✅ Beneficio real para tus clientes</li>
+                <li>✅ Material publicitario listo para usar</li>
+            </ul>
+            <a href="https://wa.me/543814187925" class="boton boton-rosa">Quiero sumarme</a>
+        </div>
+    </section>
+
+    <!-- Sección Contacto -->
+    <section id="contacto" class="contacto">
+        <h2>CONTACTO Y CONTRATACIÓN</h2>
+        <div class="datos-contacto">
+            <div class="item-contacto">
+                <h4>WhatsApp directo</h4>
+                <a href="https://wa.me/543814187925" target="_blank">381 418-7925</a>
+            </div>
+            <div class="item-contacto">
+                <h4>Formulario de evento</h4>
+                <a href="https://drive.google.com/file/d/1Dvfe8gYWCfrMtjUZZJ0BMoF6ATHkSk2R/view" target="_blank">Completar aquí</a>
+            </div>
+            <div class="item-contacto">
+                <h4>Medios de pago</h4>
+                <p>Alias: <strong>360party.nx</strong> (Gabriel Antonio Alderete)</p>
+                <a href="https://wa.me/543814987814?text=Hola%2C%20buen%20d%C3%ADa%21%0A%0ASolicito%20link%20de%20pago%20con%20Tarjeta" target="_blank">Pagar con tarjeta →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer>
+        <img src="img/logo.jpg" alt="360 Party" class="logo-pie">
+        <p>© 2026 360 Party | Yerba Buena, Tucumán</p>
+    </footer>
+
+    <script src="js/efectos.js"></script>
 </body>
 </html>

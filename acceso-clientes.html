@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Clientes | 360 Party</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body class="pagina-acceso">
+    <div class="contenedor-acceso">
+        <img src="img/logo.jpg" alt="360 Party" class="logo-acceso">
+        <h1>ACCESO EXCLUSIVO CLIENTES</h1>
+        <p>Ingresá tu ID de cliente que te entregamos al contratar el servicio</p>
+        
+        <input type="text" id="idCliente" placeholder="Ej: CLI001" class="campo-clave">
+        <button onclick="validarCliente()" class="boton boton-rosa">Ingresar</button>
+        
+        <div id="mensaje"></div>
+        <a href="index.html" class="volver">← Volver a la página principal</a>
+    </div>
+    <script src="js/validacion-acceso.js"></script>
+</body>
+</html>
