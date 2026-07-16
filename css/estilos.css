@@ -70,7 +70,7 @@ body {
     padding: 2rem;
     /* Tu imagen como fondo principal, con filtro para que resalten los textos */
     background: linear-gradient(rgba(17, 17, 31, 0.75), rgba(17, 17, 31, 0.85)),
-                url('../img/portada.jpg') center/cover no-repeat fixed;
+                url('img/portada.jpg') center/cover no-repeat fixed;
     position: relative;
     overflow: hidden;
 }
