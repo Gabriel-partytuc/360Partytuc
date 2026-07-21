@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar | 360 Party</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/reservas.css">
+    <link rel="icon" href="img/logo.jpg">
+</head>
+<body>
+    <header class="navegacion">
+        <div class="logo">
+            <img src="img/logo.jpg" alt="360 Party - Capture el movimiento">
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="index.html#servicios">Servicios</a></li>
+                <li><a href="reservas.html">Reservar</a></li>
+                <li><a href="index.html#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="reservas">
+        <h1>RESERVÁ TU SERVICIO</h1>
+        <p class="subtitulo">Elegí tus servicios, armá tu presupuesto y confirmá tu reserva. Coordinamos los detalles finales por WhatsApp.</p>
+
+        <section class="panel-datos">
+            <div class="campo">
+                <label for="fecha">Fecha del evento</label>
+                <input type="date" id="fecha">
+            </div>
+            <div class="campo">
+                <label for="horaDesde">Hora desde</label>
+                <input type="time" id="horaDesde" value="20:00">
+            </div>
+            <div class="campo">
+                <label for="horaHasta">Hora hasta</label>
+                <input type="time" id="horaHasta" value="23:00">
+            </div>
+            <div class="campo">
+                <label for="localidad">Localidad</label>
+                <select id="localidad">
+                    <option value="">Seleccioná...</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="catalogo-grupo">
+            <h2>Combos</h2>
+            <div class="grid-catalogo" id="grid-combos"></div>
+        </section>
+
+        <section class="catalogo-grupo">
+            <h2>Servicios individuales</h2>
+            <div class="grid-catalogo" id="grid-individuales"></div>
+        </section>
+
+        <!-- Paso: elección de combo -->
+        <section class="paso" id="paso-eleccion">
+            <h2>Elegí los servicios de tu combo</h2>
+            <div id="lista-eleccion" class="grid-catalogo"></div>
+        </section>
+
+        <!-- Paso: adicionales -->
+        <section class="paso" id="paso-adicionales">
+            <h2>¿Querés agregar adicionales?</h2>
+            <div id="lista-adicionales" class="lista-adicionales"></div>
+            <button class="boton boton-celeste" id="btn-continuar-adicionales" style="margin-top:1rem;">Continuar</button>
+        </section>
+
+        <!-- Paso: dirección + confirmar -->
+        <section class="paso" id="paso-direccion">
+            <h2>Datos finales</h2>
+            <div class="panel-datos">
+                <div class="campo">
+                    <label for="direccion">Dirección del evento</label>
+                    <input type="text" id="direccion" placeholder="Av. San Martín 1234, Tucumán">
+                </div>
+                <div class="campo">
+                    <label for="telefono">Tu WhatsApp</label>
+                    <input type="tel" id="telefono" placeholder="3814187925">
+                </div>
+            </div>
+            <button class="boton boton-rosa" id="btn-confirmar-reserva">Confirmar reserva</button>
+        </section>
+
+        <!-- Paso: confirmación final -->
+        <section class="paso confirmacion-final" id="paso-confirmacion">
+            <h2>🎉 ¡Reserva registrada!</h2>
+            <p>Tu reserva quedó guardada como <strong>pendiente</strong>.</p>
+            <p class="id-reserva" id="texto-id-reserva"></p>
+            <p>Te vamos a redirigir a WhatsApp para coordinar la seña. Si cerrás esta pestaña, tu reserva ya está guardada de todas formas.</p>
+            <a href="#" id="link-whatsapp" class="boton boton-rosa" target="_blank">Ir a WhatsApp</a>
+        </section>
+    </main>
+
+    <!-- Modal de fotos -->
+    <div class="modal-fotos" id="modal-fotos">
+        <div class="modal-fotos-contenido">
+            <button class="modal-fotos-cerrar" id="cerrar-modal">✕</button>
+            <h3 id="modal-fotos-titulo"></h3>
+            <img id="modal-fotos-img" src="img/placeholder-servicio.svg" alt="Foto del servicio">
+        </div>
+    </div>
+
+    <!-- Barra de carrito persistente -->
+    <div class="carrito-barra" id="carrito-barra" style="display:none;">
+        <div class="carrito-resumen">
+            <span id="carrito-cantidad">0</span> servicio(s) — <strong id="carrito-total">$0</strong>
+        </div>
+        <button class="boton boton-celeste" id="btn-ver-carrito">Ver carrito</button>
+    </div>
+
+    <!-- Drawer del carrito -->
+    <div class="carrito-drawer" id="carrito-drawer">
+        <button class="modal-fotos-cerrar" id="cerrar-drawer">✕</button>
+        <h2>Tu carrito</h2>
+        <div id="lista-carrito"></div>
+        <p style="margin-top:1rem;">Total: <strong id="drawer-total">$0</strong></p>
+        <button class="boton boton-rosa" id="btn-ir-direccion" style="width:100%; margin-top:1rem;">Continuar</button>
+    </div>
+
+    <footer>
+        <img src="img/logo.jpg" alt="360 Party" class="logo-pie">
+        <p>© 2026 360 Party | Yerba Buena, Tucumán</p>
+    </footer>
+
+    <script src="js/efectos.js"></script>
+    <script src="js/reservas.js"></script>
+</body>
+</html>

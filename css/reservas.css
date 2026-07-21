@@ -1,0 +1,308 @@
+/* Página de Reservas */
+
+.reservas {
+    padding: 2rem 5% 8rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reservas h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    color: var(--rosa-neon);
+    text-shadow: var(--sombra-rosa);
+    margin-bottom: 0.5rem;
+}
+
+.reservas .subtitulo {
+    text-align: center;
+    opacity: 0.85;
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+}
+
+/* Panel de fecha/hora/localidad */
+.panel-datos {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--celeste-neon);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.panel-datos .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.panel-datos label {
+    font-size: 0.85rem;
+    color: var(--celeste-neon);
+}
+
+.panel-datos input,
+.panel-datos select {
+    padding: 0.7rem;
+    border-radius: 8px;
+    border: 2px solid var(--celeste-neon);
+    background: rgba(0,0,0,0.3);
+    color: white;
+    font-size: 0.95rem;
+}
+
+.panel-datos input:focus,
+.panel-datos select:focus {
+    outline: none;
+    box-shadow: var(--sombra-celeste);
+}
+
+/* Grid de catálogo */
+.catalogo-grupo h2 {
+    font-size: 1.6rem;
+    color: var(--celeste-neon);
+    margin: 2rem 0 1rem;
+}
+
+.grid-catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.tarjeta-servicio {
+    position: relative;
+    background-color: rgba(255,255,255,0.05);
+    border: 2px solid var(--celeste-neon);
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.tarjeta-servicio:hover,
+.tarjeta-servicio:focus-within {
+    transform: scale(1.02);
+    border-color: var(--rosa-neon);
+    box-shadow: var(--sombra-rosa);
+}
+
+.tarjeta-servicio h3 {
+    color: var(--celeste-neon);
+    font-size: 1.2rem;
+}
+
+.tarjeta-servicio .descripcion {
+    font-size: 0.9rem;
+    opacity: 0.85;
+    flex-grow: 1;
+}
+
+.tarjeta-servicio .precio {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--rosa-neon);
+}
+
+.badge-disponibilidad {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.badge-disponible {
+    background: rgba(0,255,148,0.15);
+    color: #00FF94;
+    border: 1px solid #00FF94;
+}
+
+.badge-no-disponible {
+    background: rgba(255,77,109,0.15);
+    color: #FF4D6D;
+    border: 1px solid #FF4D6D;
+}
+
+.tarjeta-servicio .boton-agregar {
+    margin-top: auto;
+    padding: 0.7rem;
+    border-radius: 8px;
+    border: none;
+    background: var(--rosa-neon);
+    color: var(--fondo-oscuro);
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--rosa-neon);
+}
+
+.tarjeta-servicio .boton-agregar:disabled {
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.5);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Modal de fotos */
+.modal-fotos {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+}
+
+.modal-fotos.abierto {
+    display: flex;
+}
+
+.modal-fotos-contenido {
+    background: #1A1A2E;
+    border: 2px solid var(--rosa-neon);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 100%;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.modal-fotos-contenido img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.modal-fotos-cerrar {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--texto-blanco);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Carrito persistente */
+.carrito-barra {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(18, 18, 31, 0.97);
+    border-top: 2px solid var(--rosa-neon);
+    box-shadow: 0 -2px 15px rgba(255, 46, 159, 0.25);
+    padding: 1rem 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 900;
+}
+
+.carrito-resumen {
+    font-size: 0.95rem;
+}
+
+.carrito-resumen strong {
+    color: var(--celeste-neon);
+}
+
+.carrito-barra .boton {
+    padding: 0.8rem 1.6rem;
+    font-size: 0.95rem;
+}
+
+/* Drawer de detalle del carrito */
+.carrito-drawer {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(400px, 100%);
+    height: 100%;
+    background: #1A1A2E;
+    border-left: 2px solid var(--celeste-neon);
+    padding: 1.5rem;
+    overflow-y: auto;
+    transition: right 0.3s;
+    z-index: 1100;
+}
+
+.carrito-drawer.abierto {
+    right: 0;
+}
+
+.carrito-drawer h2 {
+    color: var(--celeste-neon);
+    margin-bottom: 1rem;
+}
+
+.item-carrito {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.item-carrito .quitar {
+    background: none;
+    border: none;
+    color: #FF4D6D;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+/* Pasos: adicionales, dirección, confirmación */
+.paso {
+    display: none;
+}
+
+.paso.activo {
+    display: block;
+}
+
+.lista-adicionales label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.confirmacion-final {
+    text-align: center;
+    padding: 2rem;
+}
+
+.confirmacion-final .id-reserva {
+    font-size: 1.8rem;
+    color: #00FF94;
+    text-shadow: 0 0 8px #00FF94;
+    margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+    .carrito-barra {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    .carrito-drawer {
+        width: 100%;
+    }
+}
