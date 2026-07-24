@@ -61,6 +61,17 @@
     box-shadow: var(--sombra-celeste);
 }
 
+.panel-datos-error {
+    border-color: var(--rosa-neon);
+    box-shadow: var(--sombra-rosa);
+    animation: panel-datos-pulso 0.5s ease-in-out 2;
+}
+
+@keyframes panel-datos-pulso {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.01); }
+}
+
 /* Grid de catálogo */
 .catalogo-grupo h2 {
     font-size: 1.6rem;

@@ -166,6 +166,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("fecha").addEventListener("change", cargarCatalogo);
   document.getElementById("horaDesde").addEventListener("change", cargarCatalogo);
   document.getElementById("horaHasta").addEventListener("change", cargarCatalogo);
+  document.getElementById("localidad").addEventListener("change", () => {
+    actualizarBarraCarrito();
+    if (document.getElementById("carrito-drawer").classList.contains("abierto")) renderDrawerCarrito();
+  });
 
   document.getElementById("btn-ver-carrito").addEventListener("click", () => abrirCarrito());
   document.getElementById("cerrar-drawer").addEventListener("click", () => cerrarCarrito());
@@ -198,6 +202,13 @@ function quitarDelCarrito(index) {
   renderCatalogo();
 }
 
+function costoLocalidadActual() {
+  const nombre = document.getElementById("localidad").value;
+  if (!nombre) return 0;
+  const loc = localidades.find(l => l.nombre === nombre);
+  return loc ? Number(loc.costoAdicional) || 0 : 0;
+}
+
 function totalCarritoEstimado() {
   const catalogoCompleto = [...catalogo.combos, ...catalogo.individuales];
   let total = 0;
@@ -209,6 +220,7 @@ function totalCarritoEstimado() {
       if (s) total += Number(s.precio) || 0;
     }
   });
+  total += costoLocalidadActual();
   return total;
 }
 
@@ -246,6 +258,13 @@ function renderDrawerCarrito() {
     div.querySelector(".quitar").addEventListener("click", () => quitarDelCarrito(idx));
     lista.appendChild(div);
   });
+  const costoLocalidad = costoLocalidadActual();
+  if (costoLocalidad > 0) {
+    const div = document.createElement("div");
+    div.className = "item-carrito";
+    div.innerHTML = `<span>Adicional por distancia (${document.getElementById("localidad").value})</span><span>${formatoPrecio(costoLocalidad)}</span>`;
+    lista.appendChild(div);
+  }
   document.getElementById("drawer-total").textContent = formatoPrecio(totalCarritoEstimado());
 }
 
@@ -255,10 +274,17 @@ function mostrarPaso(idPaso) {
   document.getElementById(idPaso).scrollIntoView({ behavior: "smooth" });
 }
 
+function avisarFaltanDatosEvento() {
+  const panel = document.querySelector(".panel-datos");
+  panel.scrollIntoView({ behavior: "smooth", block: "center" });
+  panel.classList.add("panel-datos-error");
+  setTimeout(() => panel.classList.remove("panel-datos-error"), 2000);
+}
+
 async function iniciarEleccionCombo(combo) {
   const { fecha, horaDesde, horaHasta } = datosEvento();
   if (!fecha || !horaDesde || !horaHasta) {
-    alert("Elegí primero la fecha y el horario del evento.");
+    avisarFaltanDatosEvento();
     return;
   }
   comboEnEleccion = combo;
