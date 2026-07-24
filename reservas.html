@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservar | 360 Party</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/estilos.css">
     <link rel="stylesheet" href="css/reservas.css">
     <link rel="icon" href="img/logo.jpg">
 </head>
-<body>
+<body class="pagina-reservas">
     <header class="navegacion">
         <div class="logo">
             <img src="img/logo.jpg" alt="360 Party - Capture el movimiento">
@@ -24,37 +27,53 @@
     </header>
 
     <main class="reservas">
-        <h1>RESERVÁ TU SERVICIO</h1>
-        <p class="subtitulo">Elegí tus servicios, armá tu presupuesto y confirmá tu reserva. Coordinamos los detalles finales por WhatsApp.</p>
 
+        <!-- Encabezado tipo cabecera de ticket -->
+        <section class="hero-reservas">
+            <p class="hero-reservas__marca">360 Party — Yerba Buena, Tucumán</p>
+            <h1 class="hero-reservas__titulo">Reservá<br>tu evento</h1>
+            <p class="hero-reservas__sub">Elegí tus servicios, armá tu presupuesto y confirmá. Coordinamos la seña por WhatsApp.</p>
+
+            <ol class="pasos-indicador" id="pasos-indicador">
+                <li data-paso="catalogo" class="activo"><span class="pasos-indicador__num">01</span>Catálogo</li>
+                <li data-paso="evento"><span class="pasos-indicador__num">02</span>Tu reserva</li>
+                <li data-paso="confirmar"><span class="pasos-indicador__num">03</span>Confirmada</li>
+            </ol>
+        </section>
+
+        <!-- Datos del evento -->
         <section class="panel-datos">
-            <div class="campo">
-                <label for="fecha">Fecha del evento</label>
-                <input type="date" id="fecha">
-            </div>
-            <div class="campo">
-                <label for="horaDesde">Hora desde</label>
-                <input type="time" id="horaDesde" value="20:00">
-            </div>
-            <div class="campo">
-                <label for="horaHasta">Hora hasta</label>
-                <input type="time" id="horaHasta" value="23:00">
-            </div>
-            <div class="campo">
-                <label for="localidad">Localidad</label>
-                <select id="localidad">
-                    <option value="">Seleccioná...</option>
-                </select>
+            <p class="panel-datos__etiqueta">Datos del evento</p>
+            <div class="panel-datos__campos">
+                <div class="campo">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha">
+                </div>
+                <div class="campo">
+                    <label for="horaDesde">Desde</label>
+                    <input type="time" id="horaDesde" value="20:00">
+                </div>
+                <div class="campo">
+                    <label for="horaHasta">Hasta</label>
+                    <input type="time" id="horaHasta" value="23:00">
+                </div>
+                <div class="campo">
+                    <label for="localidad">Localidad</label>
+                    <select id="localidad">
+                        <option value="">Seleccioná...</option>
+                    </select>
+                </div>
             </div>
         </section>
 
+        <!-- Catálogo -->
         <section class="catalogo-grupo">
-            <h2>Combos</h2>
+            <h2><span class="catalogo-grupo__indice">01</span>Combos</h2>
             <div class="grid-catalogo" id="grid-combos"></div>
         </section>
 
         <section class="catalogo-grupo">
-            <h2>Servicios individuales</h2>
+            <h2><span class="catalogo-grupo__indice">02</span>Servicios individuales</h2>
             <div class="grid-catalogo" id="grid-individuales"></div>
         </section>
 
@@ -68,20 +87,22 @@
         <section class="paso" id="paso-adicionales">
             <h2>¿Querés agregar adicionales?</h2>
             <div id="lista-adicionales" class="lista-adicionales"></div>
-            <button class="boton boton-celeste" id="btn-continuar-adicionales" style="margin-top:1rem;">Continuar</button>
+            <button class="boton boton-celeste" id="btn-continuar-adicionales">Continuar</button>
         </section>
 
         <!-- Paso: dirección + confirmar -->
         <section class="paso" id="paso-direccion">
             <h2>Datos finales</h2>
-            <div class="panel-datos">
-                <div class="campo">
-                    <label for="direccion">Dirección del evento</label>
-                    <input type="text" id="direccion" placeholder="Av. San Martín 1234, Tucumán">
-                </div>
-                <div class="campo">
-                    <label for="telefono">Tu WhatsApp</label>
-                    <input type="tel" id="telefono" placeholder="3814187925">
+            <div class="panel-datos panel-datos--inline">
+                <div class="panel-datos__campos">
+                    <div class="campo">
+                        <label for="direccion">Dirección del evento</label>
+                        <input type="text" id="direccion" placeholder="Av. San Martín 1234, Tucumán">
+                    </div>
+                    <div class="campo">
+                        <label for="telefono">Tu WhatsApp</label>
+                        <input type="tel" id="telefono" placeholder="3814187925">
+                    </div>
                 </div>
             </div>
             <p class="mensaje-error" id="error-confirmacion" style="display:none;"></p>
@@ -90,18 +111,22 @@
 
         <!-- Paso: confirmación final -->
         <section class="paso confirmacion-final" id="paso-confirmacion">
-            <h2>¡Reserva registrada!</h2>
-            <p>Tu reserva quedó guardada como <strong>pendiente</strong>.</p>
-            <p class="id-reserva" id="texto-id-reserva"></p>
-            <p>Te vamos a redirigir a WhatsApp para coordinar la seña. Si cerrás esta pestaña, tu reserva ya está guardada de todas formas.</p>
-            <a href="#" id="link-whatsapp" class="boton boton-rosa" target="_blank">Ir a WhatsApp</a>
+            <div class="ticket-confirmacion">
+                <span class="ticket-confirmacion__sello">Confirmada</span>
+                <p class="ticket-confirmacion__etiqueta">N.º de reserva</p>
+                <p class="ticket-confirmacion__id" id="texto-id-reserva"></p>
+                <p class="ticket-confirmacion__estado">Estado: <strong>pendiente</strong></p>
+                <div class="ticket-confirmacion__separador"></div>
+                <p class="ticket-confirmacion__texto">Te vamos a redirigir a WhatsApp para coordinar la seña. Si cerrás esta pestaña, tu reserva ya está guardada de todas formas.</p>
+                <a href="#" id="link-whatsapp" class="boton boton-rosa" target="_blank">Ir a WhatsApp</a>
+            </div>
         </section>
     </main>
 
     <!-- Modal de fotos -->
     <div class="modal-fotos" id="modal-fotos">
         <div class="modal-fotos-contenido">
-            <button class="modal-fotos-cerrar" id="cerrar-modal">&times;</button>
+            <button class="boton-cerrar" id="cerrar-modal">&times;</button>
             <h3 id="modal-fotos-titulo"></h3>
             <img id="modal-fotos-img" src="img/placeholder-servicio.svg" alt="Foto del servicio">
         </div>
@@ -110,18 +135,23 @@
     <!-- Barra de carrito persistente -->
     <div class="carrito-barra" id="carrito-barra" style="display:none;">
         <div class="carrito-resumen">
-            <span id="carrito-cantidad">0</span> servicio(s) — <strong id="carrito-total">$0</strong>
+            <span class="carrito-resumen__cantidad"><span id="carrito-cantidad">0</span> servicio(s)</span>
+            <strong id="carrito-total">$0</strong>
         </div>
         <button class="boton boton-celeste" id="btn-ver-carrito">Ver carrito</button>
     </div>
 
     <!-- Drawer del carrito -->
     <div class="carrito-drawer" id="carrito-drawer">
-        <button class="modal-fotos-cerrar" id="cerrar-drawer">&times;</button>
+        <div class="carrito-drawer__diente" aria-hidden="true"></div>
+        <button class="boton-cerrar" id="cerrar-drawer">&times;</button>
         <h2>Tu carrito</h2>
         <div id="lista-carrito"></div>
-        <p style="margin-top:1rem;">Total: <strong id="drawer-total">$0</strong></p>
-        <button class="boton boton-rosa" id="btn-ir-direccion" style="width:100%; margin-top:1rem;">Continuar</button>
+        <div class="carrito-drawer__total">
+            <span>Total</span>
+            <strong id="drawer-total">$0</strong>
+        </div>
+        <button class="boton boton-rosa" id="btn-ir-direccion" style="width:100%;">Continuar</button>
     </div>
 
     <footer>

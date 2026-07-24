@@ -97,6 +97,7 @@ function crearCardServicio(servicio, esCombo) {
 
   card.innerHTML = `
     <div class="zona-preview">
+      <span class="tarjeta-servicio__categoria">${esCombo ? "Combo" : "Individual"}</span>
       <h3>${servicio.nombre}</h3>
       <p class="descripcion">${servicio.descripcion || ""}</p>
       ${badge}
@@ -278,10 +279,22 @@ function renderDrawerCarrito() {
   document.getElementById("drawer-total").textContent = formatoPrecio(totalCarritoEstimado());
 }
 
+function actualizarIndicadorPasos(idPaso) {
+  const indicador = document.getElementById("pasos-indicador");
+  if (!indicador) return;
+  const orden = ["catalogo", "evento", "confirmar"];
+  const actual = idPaso === "paso-confirmacion" ? "confirmar" : "evento";
+  const idxActual = orden.indexOf(actual);
+  indicador.querySelectorAll("li").forEach(li => {
+    li.classList.toggle("activo", orden.indexOf(li.dataset.paso) <= idxActual);
+  });
+}
+
 function mostrarPaso(idPaso) {
   document.querySelectorAll(".paso").forEach(p => p.classList.remove("activo"));
   document.getElementById(idPaso).classList.add("activo");
   document.getElementById(idPaso).scrollIntoView({ behavior: "smooth" });
+  actualizarIndicadorPasos(idPaso);
 }
 
 function avisarFaltanDatosEvento() {

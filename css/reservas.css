@@ -1,180 +1,388 @@
-/* Página de Reservas */
+/* =========================================================================
+   RESERVAS — 360 Party
+   Dirección de arte: "ticket de entrada / cartel de festival", brutalista.
+   Sin gradientes, sin emojis, sombras duras (offset), tipografía de cartel
+   (Anton) + monoespaciada de recibo (JetBrains Mono).
+   ========================================================================= */
+
+body.pagina-reservas {
+    /* Reasigna la paleta compartida SOLO en esta página: la cabecera
+       (.navegacion, que vive en estilos.css) hereda estos valores porque
+       son variables CSS, así que el header queda coherente con el resto
+       sin tocar el archivo compartido. */
+    --rosa-neon: #FF1F6D;
+    --celeste-neon: #C9FF3D;
+    --fondo-oscuro: #131218;
+    --texto-blanco: #F4EFE2;
+    --sombra-rosa: 3px 3px 0 #FF1F6D;
+    --sombra-celeste: 3px 3px 0 #C9FF3D;
+
+    --tinta: #17161C;
+    --papel: #F4EEDF;
+    --papel-sombra: #E7DFC9;
+    --linea: rgba(23, 22, 28, 0.16);
+
+    font-family: 'JetBrains Mono', monospace;
+}
+
+body.pagina-reservas .navegacion {
+    background-color: var(--fondo-oscuro);
+    border-bottom: 3px solid var(--tinta);
+    box-shadow: none;
+}
+
+body.pagina-reservas .menu a {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+}
+
+body.pagina-reservas .menu a:hover {
+    color: var(--celeste-neon);
+    text-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+   Estructura general
+   ------------------------------------------------------------------------- */
 
 .reservas {
-    padding: 2rem 5% 8rem;
-    max-width: 1200px;
+    padding: 0 5% 10rem;
+    max-width: 1180px;
     margin: 0 auto;
 }
 
-.reservas h1 {
-    text-align: center;
-    font-size: 2.2rem;
-    color: var(--rosa-neon);
-    text-shadow: var(--sombra-rosa);
-    margin-bottom: 0.5rem;
+/* -------------------------------------------------------------------------
+   Hero
+   ------------------------------------------------------------------------- */
+
+.hero-reservas {
+    padding: 4rem 0 2.5rem;
+    border-bottom: 3px solid var(--tinta);
+    position: relative;
 }
 
-.reservas .subtitulo {
-    text-align: center;
-    opacity: 0.85;
-    max-width: 640px;
-    margin: 0 auto 2.5rem;
+.hero-reservas__marca {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--celeste-neon);
+    margin-bottom: 1.2rem;
 }
 
-/* Panel de fecha/hora/localidad */
-.panel-datos {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--celeste-neon);
-    border-radius: 12px;
-    padding: 1.5rem;
+.hero-reservas__titulo {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(3.2rem, 9vw, 6.5rem);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--texto-blanco);
+    text-shadow: 5px 5px 0 var(--rosa-neon);
+    margin-bottom: 1.5rem;
+    animation: entrada-titulo 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-reservas__sub {
+    max-width: 480px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    opacity: 0.75;
     margin-bottom: 2.5rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    align-items: end;
+    animation: entrada-sub 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
-.panel-datos .campo {
+@keyframes entrada-titulo {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entrada-sub {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 0.75; transform: translateY(0); }
+}
+
+/* Indicador de pasos, estilo lineup de festival */
+.pasos-indicador {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    animation: entrada-sub 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.pasos-indicador li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 1rem 0.55rem 0.6rem;
+    border: 2px solid var(--linea);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(244, 239, 226, 0.45);
+    transition: border-color 0.25s, color 0.25s;
+}
+
+.pasos-indicador__num {
+    font-weight: 800;
+    color: rgba(244, 239, 226, 0.3);
+    transition: color 0.25s;
+}
+
+.pasos-indicador li.activo {
+    border-color: var(--rosa-neon);
+    color: var(--texto-blanco);
+}
+
+.pasos-indicador li.activo .pasos-indicador__num {
+    color: var(--rosa-neon);
+}
+
+/* -------------------------------------------------------------------------
+   Panel de datos del evento
+   ------------------------------------------------------------------------- */
+
+.panel-datos {
+    background: var(--papel);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    box-shadow: 6px 6px 0 var(--rosa-neon);
+    padding: 1.6rem 1.8rem;
+    margin: 2.5rem 0;
+}
+
+.panel-datos--inline {
+    box-shadow: none;
+    border-width: 2px;
+    margin: 1.5rem 0;
+    padding: 1.3rem 1.5rem;
+}
+
+.panel-datos__etiqueta {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--rosa-neon);
+    margin-bottom: 1rem;
+}
+
+.panel-datos__campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.2rem;
+}
+
+.campo {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
 }
 
-.panel-datos label {
-    font-size: 0.85rem;
-    color: var(--celeste-neon);
+.campo label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tinta);
+    opacity: 0.6;
 }
 
 .panel-datos input,
 .panel-datos select {
-    padding: 0.7rem;
-    border-radius: 8px;
-    border: 2px solid var(--celeste-neon);
-    background: rgba(0,0,0,0.3);
-    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 0.65rem 0.7rem;
+    border: 2px solid var(--tinta);
+    border-radius: 0;
+    background: #FFFDF6;
+    color: var(--tinta);
     font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .panel-datos input:focus,
 .panel-datos select:focus {
     outline: none;
-    box-shadow: var(--sombra-celeste);
-}
-
-.mensaje-error {
-    color: #FF4D6D;
-    background: rgba(255,77,109,0.1);
-    border: 1px solid #FF4D6D;
-    border-radius: 8px;
-    padding: 0.8rem 1rem;
-    margin: 1rem 0;
+    box-shadow: 3px 3px 0 var(--rosa-neon);
 }
 
 .panel-datos-error {
-    border-color: var(--rosa-neon);
-    box-shadow: var(--sombra-rosa);
-    animation: panel-datos-pulso 0.5s ease-in-out 2;
+    animation: sacudida 0.4s;
 }
 
-@keyframes panel-datos-pulso {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.01); }
+@keyframes sacudida {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
 }
 
-/* Grid de catálogo */
+.mensaje-error {
+    color: var(--tinta);
+    background: var(--celeste-neon);
+    border: 2px solid var(--tinta);
+    padding: 0.8rem 1rem;
+    margin: 1.2rem 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* -------------------------------------------------------------------------
+   Catálogo
+   ------------------------------------------------------------------------- */
+
 .catalogo-grupo h2 {
-    font-size: 1.6rem;
-    color: var(--celeste-neon);
-    margin: 2rem 0 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 1.9rem;
+    letter-spacing: 0.01em;
+    color: var(--texto-blanco);
+    margin: 3.5rem 0 1.5rem;
+}
+
+.catalogo-grupo__indice {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--rosa-neon);
+    border: 2px solid var(--rosa-neon);
+    padding: 0.15rem 0.5rem;
 }
 
 .grid-catalogo {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.4rem;
 }
 
 .tarjeta-servicio {
     position: relative;
-    background-color: rgba(255,255,255,0.05);
-    border: 2px solid var(--celeste-neon);
-    border-radius: 12px;
-    padding: 1.2rem;
+    background: var(--papel);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    box-shadow: 5px 5px 0 var(--tinta);
+    padding: 1.3rem 1.3rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    transition: all 0.3s;
+    gap: 0.5rem;
     cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tarjeta-servicio:hover,
 .tarjeta-servicio:focus-within {
-    transform: scale(1.02);
-    border-color: var(--rosa-neon);
-    box-shadow: var(--sombra-rosa);
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0 var(--rosa-neon);
+}
+
+.tarjeta-servicio__categoria {
+    align-self: flex-start;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--papel);
+    background: var(--tinta);
+    padding: 0.2rem 0.55rem;
+    margin-bottom: 0.3rem;
 }
 
 .tarjeta-servicio h3 {
-    color: var(--celeste-neon);
-    font-size: 1.2rem;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    line-height: 1.15;
+    letter-spacing: 0.005em;
 }
 
 .tarjeta-servicio .descripcion {
-    font-size: 0.9rem;
-    opacity: 0.85;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    opacity: 0.75;
     flex-grow: 1;
 }
 
 .tarjeta-servicio .precio {
-    font-weight: bold;
-    font-size: 1.1rem;
-    color: var(--rosa-neon);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin-top: 0.3rem;
 }
 
 .badge-disponibilidad {
     display: inline-block;
-    font-size: 0.8rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 20px;
-    width: fit-content;
+    align-self: flex-start;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.55rem;
+    border: 2px solid var(--tinta);
 }
 
 .badge-disponible {
-    background: rgba(0,255,148,0.15);
-    color: #00FF94;
-    border: 1px solid #00FF94;
+    background: var(--celeste-neon);
+    color: var(--tinta);
 }
 
 .badge-no-disponible {
-    background: rgba(255,77,109,0.15);
-    color: #FF4D6D;
-    border: 1px solid #FF4D6D;
+    background: transparent;
+    color: var(--tinta);
+    opacity: 0.55;
+    text-decoration: line-through;
 }
 
 .tarjeta-servicio .boton-agregar {
-    margin-top: auto;
-    padding: 0.7rem;
-    border-radius: 8px;
-    border: none;
-    background: var(--rosa-neon);
-    color: var(--fondo-oscuro);
-    font-weight: bold;
+    margin-top: 0.6rem;
+    padding: 0.75rem;
+    border: 2px solid var(--tinta);
+    background: var(--tinta);
+    color: var(--papel);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
     cursor: pointer;
-    box-shadow: 0 0 10px var(--rosa-neon);
+    transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.tarjeta-servicio .boton-agregar:hover:not(:disabled) {
+    background: var(--rosa-neon);
+    border-color: var(--rosa-neon);
+    color: var(--tinta);
+}
+
+.tarjeta-servicio .boton-agregar:active:not(:disabled) {
+    transform: translateY(2px);
 }
 
 .tarjeta-servicio .boton-agregar:disabled {
-    background: rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.5);
-    box-shadow: none;
+    background: transparent;
+    color: var(--tinta);
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
-/* Modal de fotos */
+/* -------------------------------------------------------------------------
+   Modal de fotos
+   ------------------------------------------------------------------------- */
+
 .modal-fotos {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(19, 18, 24, 0.9);
     display: none;
     align-items: center;
     justify-content: center;
@@ -187,42 +395,66 @@
 }
 
 .modal-fotos-contenido {
-    background: #1A1A2E;
-    border: 2px solid var(--rosa-neon);
-    border-radius: 12px;
+    background: var(--papel);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    box-shadow: 8px 8px 0 var(--rosa-neon);
     max-width: 600px;
     width: 100%;
-    padding: 1.5rem;
-    text-align: center;
+    padding: 1.8rem;
     position: relative;
+}
+
+.modal-fotos-contenido h3 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    padding-right: 2rem;
 }
 
 .modal-fotos-contenido img {
     max-width: 100%;
-    border-radius: 8px;
+    border: 2px solid var(--tinta);
     margin-top: 1rem;
+    display: block;
 }
 
-.modal-fotos-cerrar {
+.boton-cerrar {
     position: absolute;
-    top: 0.8rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    color: var(--texto-blanco);
-    font-size: 1.5rem;
+    top: 0.9rem;
+    right: 0.9rem;
+    width: 2.1rem;
+    height: 2.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--papel);
+    border: 2px solid var(--tinta);
+    color: var(--tinta);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    line-height: 1;
     cursor: pointer;
+    transition: background 0.15s, color 0.15s;
 }
 
-/* Carrito persistente */
+.boton-cerrar:hover {
+    background: var(--tinta);
+    color: var(--papel);
+}
+
+/* -------------------------------------------------------------------------
+   Carrito persistente (barra inferior)
+   ------------------------------------------------------------------------- */
+
 .carrito-barra {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(18, 18, 31, 0.97);
-    border-top: 2px solid var(--rosa-neon);
-    box-shadow: 0 -2px 15px rgba(255, 46, 159, 0.25);
+    background: var(--tinta);
+    border-top: 3px solid var(--rosa-neon);
     padding: 1rem 5%;
     display: flex;
     align-items: center;
@@ -232,30 +464,46 @@
 }
 
 .carrito-resumen {
-    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-size: 0.85rem;
+    color: var(--texto-blanco);
+}
+
+.carrito-resumen__cantidad {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
 }
 
 .carrito-resumen strong {
+    font-size: 1.25rem;
     color: var(--celeste-neon);
 }
 
 .carrito-barra .boton {
-    padding: 0.8rem 1.6rem;
-    font-size: 0.95rem;
+    padding: 0.75rem 1.4rem;
+    font-size: 0.85rem;
 }
 
-/* Drawer de detalle del carrito */
+/* -------------------------------------------------------------------------
+   Drawer del carrito, estilo comprobante
+   ------------------------------------------------------------------------- */
+
 .carrito-drawer {
     position: fixed;
     top: 0;
     right: -100%;
-    width: min(400px, 100%);
+    width: min(420px, 100%);
     height: 100%;
-    background: #1A1A2E;
-    border-left: 2px solid var(--celeste-neon);
-    padding: 1.5rem;
+    background: var(--papel);
+    color: var(--tinta);
+    border-left: 3px solid var(--tinta);
+    padding: 2rem 1.7rem 1.7rem;
     overflow-y: auto;
-    transition: right 0.3s;
+    transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 1100;
 }
 
@@ -263,66 +511,285 @@
     right: 0;
 }
 
+.carrito-drawer__diente {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 14px;
+    background: var(--fondo-oscuro);
+    clip-path: polygon(
+        0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%,
+        40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%,
+        80% 0%, 85% 100%, 90% 0%, 95% 100%, 100% 0%, 100% 100%, 0% 100%
+    );
+}
+
 .carrito-drawer h2 {
-    color: var(--celeste-neon);
-    margin-bottom: 1rem;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 1.6rem;
+    margin-bottom: 1.3rem;
 }
 
 .item-carrito {
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-    padding: 0.8rem;
-    margin-bottom: 0.8rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
+    padding: 0.85rem 0;
+    border-top: 2px dashed var(--linea);
+    font-size: 0.85rem;
+}
+
+.item-carrito:first-of-type {
+    border-top: none;
 }
 
 .item-carrito .quitar {
+    flex-shrink: 0;
     background: none;
-    border: none;
-    color: #FF4D6D;
+    border: 2px solid var(--tinta);
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--tinta);
+    font-family: 'JetBrains Mono', monospace;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    line-height: 1;
 }
 
-/* Pasos: adicionales, dirección, confirmación */
+.item-carrito .quitar:hover {
+    background: var(--rosa-neon);
+    border-color: var(--rosa-neon);
+}
+
+.carrito-drawer__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 3px solid var(--tinta);
+    margin-top: 0.6rem;
+    padding-top: 1rem;
+    margin-bottom: 1.3rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.carrito-drawer__total strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    letter-spacing: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Pasos: adicionales / dirección / confirmación
+   ------------------------------------------------------------------------- */
+
 .paso {
     display: none;
 }
 
 .paso.activo {
     display: block;
+    animation: entrada-sub 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.paso h2 {
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 1.7rem;
+    color: var(--texto-blanco);
+    margin: 3rem 0 1.3rem;
+}
+
+.lista-adicionales {
+    background: var(--papel);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    box-shadow: 6px 6px 0 var(--celeste-neon);
+    padding: 0.4rem 1.5rem;
 }
 
 .lista-adicionales label {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    gap: 0.8rem;
+    padding: 0.9rem 0;
+    border-top: 2px dashed var(--linea);
+    font-size: 0.88rem;
+    cursor: pointer;
 }
+
+.lista-adicionales label:first-of-type {
+    border-top: none;
+}
+
+.lista-adicionales input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--rosa-neon);
+}
+
+#btn-continuar-adicionales {
+    margin-top: 1.5rem;
+}
+
+/* -------------------------------------------------------------------------
+   Confirmación final, estilo ticket con sello
+   ------------------------------------------------------------------------- */
 
 .confirmacion-final {
-    text-align: center;
-    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0 3rem;
 }
 
-.confirmacion-final .id-reserva {
-    font-size: 1.8rem;
-    color: #00FF94;
-    text-shadow: 0 0 8px #00FF94;
-    margin: 1rem 0;
+.ticket-confirmacion {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    background: var(--papel);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    box-shadow: 8px 8px 0 var(--rosa-neon);
+    padding: 2.6rem 2rem 2.2rem;
+    text-align: left;
+    animation: sello-entrada 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
+
+@keyframes sello-entrada {
+    from { opacity: 0; transform: scale(0.94); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.ticket-confirmacion__sello {
+    position: absolute;
+    top: 1.5rem;
+    right: -0.5rem;
+    transform: rotate(6deg);
+    border: 3px solid var(--rosa-neon);
+    color: var(--rosa-neon);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.8rem;
+}
+
+.ticket-confirmacion__etiqueta {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    opacity: 0.55;
+    margin-bottom: 0.4rem;
+}
+
+.ticket-confirmacion__id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.6rem;
+}
+
+.ticket-confirmacion__estado {
+    font-size: 0.85rem;
+}
+
+.ticket-confirmacion__separador {
+    border-top: 2px dashed var(--linea);
+    margin: 1.4rem 0;
+}
+
+.ticket-confirmacion__texto {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    opacity: 0.75;
+    margin-bottom: 1.5rem;
+}
+
+.ticket-confirmacion .boton {
+    width: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Botones (sobreescritos: sin gradiente, esquinas rectas, sombra dura)
+   ------------------------------------------------------------------------- */
+
+.pagina-reservas .boton {
+    border-radius: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.85rem;
+    padding: 0.9rem 1.8rem;
+    border: 2px solid var(--tinta);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pagina-reservas .boton-rosa {
+    background: var(--rosa-neon);
+    color: var(--tinta);
+    box-shadow: 4px 4px 0 var(--tinta);
+}
+
+.pagina-reservas .boton-rosa:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--tinta);
+}
+
+.pagina-reservas .boton-rosa:active {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0 var(--tinta);
+}
+
+.pagina-reservas .boton-celeste {
+    background: var(--papel);
+    color: var(--tinta);
+    box-shadow: 4px 4px 0 var(--tinta);
+}
+
+.pagina-reservas .boton-celeste:hover {
+    background: var(--celeste-neon);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--tinta);
+}
+
+.pagina-reservas .boton-celeste:active {
+    transform: translate(0, 0);
+    box-shadow: 2px 2px 0 var(--tinta);
+}
+
+/* -------------------------------------------------------------------------
+   Footer (coherencia mínima en esta página)
+   ------------------------------------------------------------------------- */
+
+.pagina-reservas footer {
+    border-top: 3px solid var(--tinta);
+}
+
+/* -------------------------------------------------------------------------
+   Responsive
+   ------------------------------------------------------------------------- */
 
 @media (max-width: 768px) {
+    .hero-reservas { padding: 2.8rem 0 2rem; }
+    .reservas { padding-bottom: 8rem; }
+
     .carrito-barra {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
     }
-    .carrito-drawer {
-        width: 100%;
-    }
+    .carrito-resumen { align-items: center; }
+    .carrito-drawer { width: 100%; }
+
+    .ticket-confirmacion { padding: 2.2rem 1.4rem 1.8rem; }
+    .ticket-confirmacion__id { font-size: 1.9rem; }
 }
