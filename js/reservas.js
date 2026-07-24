@@ -8,6 +8,8 @@ let localidades = [];
 let carrito = cargarCarritoGuardado();
 let comboEnEleccion = null;
 let servicioParaAdicionales = null;
+let adicionalesInfo = {};
+let modalAbiertoPorClick = false;
 
 function guardarCarrito() {
   localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify({ items: carrito, expira: Date.now() + CARRITO_TTL_MIN * 60 * 1000 }));
@@ -76,6 +78,7 @@ async function cargarCatalogo() {
 function idsEnCarrito() {
   const ids = new Set();
   carrito.forEach(it => {
+    if (it.tipo === "adicional") return;
     ids.add(it.idServicio);
     (it.elecciones || []).forEach(id => ids.add(id));
   });
@@ -104,16 +107,16 @@ function crearCardServicio(servicio, esCombo) {
     </button>
   `;
 
-  const abrirModal = () => mostrarModalFotos(servicio);
   const zonaPreview = card.querySelector(".zona-preview");
   let hoverTimer = null;
   zonaPreview.addEventListener("mouseenter", () => {
-    hoverTimer = setTimeout(abrirModal, 350);
+    hoverTimer = setTimeout(() => mostrarModalFotos(servicio, false), 350);
   });
   zonaPreview.addEventListener("mouseleave", () => {
     clearTimeout(hoverTimer);
+    if (!modalAbiertoPorClick) cerrarModalFotos();
   });
-  zonaPreview.addEventListener("click", abrirModal);
+  zonaPreview.addEventListener("click", () => mostrarModalFotos(servicio, true));
 
   const boton = card.querySelector(".boton-agregar");
   boton.addEventListener("click", () => {
@@ -137,20 +140,27 @@ function renderCatalogo() {
   (catalogo.individuales || []).forEach(s => gridIndividuales.appendChild(crearCardServicio(s, false)));
 }
 
-function mostrarModalFotos(servicio) {
+function mostrarModalFotos(servicio, porClick) {
   const modal = document.getElementById("modal-fotos");
   document.getElementById("modal-fotos-titulo").textContent = servicio.nombre;
   const img = document.getElementById("modal-fotos-img");
   img.src = (servicio.fotos && servicio.fotos[0]) || "img/placeholder-servicio.svg";
   modal.classList.add("abierto");
+  modalAbiertoPorClick = !!porClick;
+}
+
+function cerrarModalFotos() {
+  document.getElementById("modal-fotos").classList.remove("abierto");
+  modalAbiertoPorClick = false;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("cerrar-modal").addEventListener("click", () => {
-    document.getElementById("modal-fotos").classList.remove("abierto");
-  });
+  document.getElementById("cerrar-modal").addEventListener("click", cerrarModalFotos);
   document.getElementById("modal-fotos").addEventListener("click", (ev) => {
-    if (ev.target.id === "modal-fotos") ev.currentTarget.classList.remove("abierto");
+    if (ev.target.id === "modal-fotos") cerrarModalFotos();
+  });
+  document.getElementById("modal-fotos").addEventListener("mouseleave", () => {
+    if (!modalAbiertoPorClick) cerrarModalFotos();
   });
 
   document.getElementById("fecha").addEventListener("change", cargarCatalogo);
@@ -163,7 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
     cerrarCarrito();
     mostrarPaso("paso-direccion");
   });
-  document.getElementById("btn-continuar-adicionales").addEventListener("click", () => finalizarAdicionales());
+  document.getElementById("btn-continuar-adicionales").addEventListener("click", () => {
+    document.getElementById("paso-adicionales").classList.remove("activo");
+  });
   document.getElementById("btn-confirmar-reserva").addEventListener("click", () => confirmarReserva());
 
   cargarLocalidades();
@@ -187,11 +199,15 @@ function quitarDelCarrito(index) {
 }
 
 function totalCarritoEstimado() {
+  const catalogoCompleto = [...catalogo.combos, ...catalogo.individuales];
   let total = 0;
   carrito.forEach(it => {
-    const catalogoCompleto = [...catalogo.combos, ...catalogo.individuales];
-    const s = catalogoCompleto.find(x => x.id === it.idServicio);
-    if (s) total += Number(s.precio) || 0;
+    if (it.tipo === "adicional") {
+      total += Number(adicionalesInfo[it.idServicio]?.precio) || 0;
+    } else {
+      const s = catalogoCompleto.find(x => x.id === it.idServicio);
+      if (s) total += Number(s.precio) || 0;
+    }
   });
   return total;
 }
@@ -217,10 +233,16 @@ function renderDrawerCarrito() {
   lista.innerHTML = "";
   const catalogoCompleto = [...catalogo.combos, ...catalogo.individuales];
   carrito.forEach((it, idx) => {
-    const s = catalogoCompleto.find(x => x.id === it.idServicio);
+    let nombre;
+    if (it.tipo === "adicional") {
+      nombre = adicionalesInfo[it.idServicio]?.nombre || it.idServicio;
+    } else {
+      const s = catalogoCompleto.find(x => x.id === it.idServicio);
+      nombre = s ? s.nombre : it.idServicio;
+    }
     const div = document.createElement("div");
     div.className = "item-carrito";
-    div.innerHTML = `<span>${s ? s.nombre : it.idServicio}</span><button class="quitar">✕</button>`;
+    div.innerHTML = `<span>${nombre}</span><button class="quitar">✕</button>`;
     div.querySelector(".quitar").addEventListener("click", () => quitarDelCarrito(idx));
     lista.appendChild(div);
   });
@@ -247,7 +269,7 @@ async function iniciarEleccionCombo(combo) {
       body: JSON.stringify({ fecha, horaDesde, horaHasta, idCombo: combo.id, carritoIds: Array.from(idsEnCarrito()) })
     });
     const data = await res.json();
-    if (data.cantidadElecciones === 0) {
+    if (!data.cantidadElecciones) {
       agregarAlCarrito({ idServicio: combo.id, tipo: "combo", elecciones: [], adicionales: [] });
       abrirFlujoAdicionales(combo);
       return;
@@ -260,25 +282,44 @@ async function iniciarEleccionCombo(combo) {
 }
 
 function renderEleccionCombo(data) {
-  const cont = document.getElementById("lista-eleccion");
-  cont.innerHTML = "";
+  const cantidadElecciones = data.cantidadElecciones;
   const elegidos = [];
-  (data.opciones || []).forEach(op => {
-    const card = document.createElement("div");
-    card.className = "tarjeta-servicio";
-    card.innerHTML = `
-      <h3>${op.nombre}</h3>
-      <p class="descripcion">${op.descripcion || ""}</p>
-      <p class="precio">${formatoPrecio(op.precio)}</p>
-      <button class="boton-agregar">Elegir</button>
-    `;
-    card.querySelector("button").addEventListener("click", () => {
-      elegidos.push(op.id);
-      agregarAlCarrito({ idServicio: comboEnEleccion.id, tipo: "combo", elecciones: elegidos.slice(0, data.cantidadElecciones), adicionales: [] });
-      abrirFlujoAdicionales(comboEnEleccion);
+  let opcionesDisponibles = data.opciones || [];
+
+  function pintar() {
+    const cont = document.getElementById("lista-eleccion");
+    cont.innerHTML = "";
+    const titulo = document.querySelector("#paso-eleccion h2");
+    if (titulo) {
+      titulo.textContent = cantidadElecciones > 1
+        ? `Elegí el servicio ${elegidos.length + 1} de ${cantidadElecciones} para tu combo`
+        : "Elegí el servicio de tu combo";
+    }
+    opcionesDisponibles.forEach(op => {
+      const card = document.createElement("div");
+      card.className = "tarjeta-servicio";
+      card.innerHTML = `
+        <h3>${op.nombre}</h3>
+        <p class="descripcion">${op.descripcion || ""}</p>
+        <p class="precio">${formatoPrecio(op.precio)}</p>
+        <button class="boton-agregar">Elegir</button>
+      `;
+      card.querySelector("button").addEventListener("click", () => {
+        elegidos.push(op.id);
+        opcionesDisponibles = opcionesDisponibles.filter(o => o.id !== op.id);
+        if (elegidos.length >= cantidadElecciones) {
+          agregarAlCarrito({ idServicio: comboEnEleccion.id, tipo: "combo", elecciones: elegidos, adicionales: [] });
+          document.getElementById("paso-eleccion").classList.remove("activo");
+          abrirFlujoAdicionales(comboEnEleccion);
+        } else {
+          pintar();
+        }
+      });
+      cont.appendChild(card);
     });
-    cont.appendChild(card);
-  });
+  }
+
+  pintar();
 }
 
 async function abrirFlujoAdicionales(servicio) {
@@ -288,32 +329,34 @@ async function abrirFlujoAdicionales(servicio) {
     const data = await res.json();
     const adicionales = data.adicionales || [];
     if (adicionales.length === 0) {
-      mostrarPaso("paso-eleccion");
-      document.getElementById("paso-eleccion").classList.remove("activo");
+      document.getElementById("paso-adicionales").classList.remove("activo");
       return;
     }
+    adicionales.forEach(a => { adicionalesInfo[a.id] = { nombre: a.nombre, precio: a.precio }; });
+
     const cont = document.getElementById("lista-adicionales");
     cont.innerHTML = "";
     adicionales.forEach(a => {
+      const yaAgregado = carrito.some(it => it.tipo === "adicional" && it.idServicio === a.id);
       const label = document.createElement("label");
-      label.innerHTML = `<input type="checkbox" value="${a.id}"> ${a.nombre} — ${formatoPrecio(a.precio)}`;
+      label.innerHTML = `<input type="checkbox" value="${a.id}" ${yaAgregado ? "checked" : ""}> ${a.nombre} — ${formatoPrecio(a.precio)}`;
+      const checkbox = label.querySelector("input");
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          carrito.push({ idServicio: a.id, tipo: "adicional", elecciones: [], adicionales: [] });
+        } else {
+          const idx = carrito.findIndex(it => it.tipo === "adicional" && it.idServicio === a.id);
+          if (idx !== -1) carrito.splice(idx, 1);
+        }
+        guardarCarrito();
+        actualizarBarraCarrito();
+      });
       cont.appendChild(label);
     });
     mostrarPaso("paso-adicionales");
   } catch (e) {
     console.error("Error cargando adicionales", e);
   }
-}
-
-function finalizarAdicionales() {
-  const seleccionados = Array.from(document.querySelectorAll("#lista-adicionales input:checked")).map(i => i.value);
-  if (seleccionados.length > 0 && carrito.length > 0) {
-    const ultimo = carrito[carrito.length - 1];
-    ultimo.adicionales = seleccionados;
-    guardarCarrito();
-  }
-  document.getElementById("paso-adicionales").classList.remove("activo");
-  actualizarBarraCarrito();
 }
 
 async function confirmarReserva() {
