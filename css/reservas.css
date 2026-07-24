@@ -9,25 +9,31 @@ body.pagina-reservas {
     /* Reasigna la paleta compartida SOLO en esta página: la cabecera
        (.navegacion, que vive en estilos.css) hereda estos valores porque
        son variables CSS, así que el header queda coherente con el resto
-       sin tocar el archivo compartido. */
-    --rosa-neon: #FF1F6D;
-    --celeste-neon: #C9FF3D;
-    --fondo-oscuro: #131218;
-    --texto-blanco: #F4EFE2;
-    --sombra-rosa: 3px 3px 0 #FF1F6D;
-    --sombra-celeste: 3px 3px 0 #C9FF3D;
+       sin tocar el archivo compartido. Modo claro: --fondo-oscuro y
+       --texto-blanco ahora valen "fondo de página" (claro) y "texto
+       principal" (tinta oscura) — el nombre quedó del tema anterior. */
+    --rosa-neon: #E31C63;
+    --celeste-neon: #C77D00;
+    --fondo-oscuro: #F4EEDF;
+    --texto-blanco: #17161C;
+    --sombra-rosa: 3px 3px 0 #E31C63;
+    --sombra-celeste: 3px 3px 0 #C77D00;
 
     --tinta: #17161C;
-    --papel: #F4EEDF;
-    --papel-sombra: #E7DFC9;
-    --linea: rgba(23, 22, 28, 0.16);
+    --papel: #FFFDF7;
+    --papel-sombra: #EDE4CC;
+    --linea: rgba(23, 22, 28, 0.15);
+    --claro: #F4EFE2;
 
     font-family: 'JetBrains Mono', monospace;
 }
 
+/* La cabecera y el pie se mantienen oscuros a propósito: son el marco
+   que enmarca el logo (que trae su propio fondo negro) y el ancla visual
+   de la página, mientras el resto pasa a modo claro. */
 body.pagina-reservas .navegacion {
-    background-color: var(--fondo-oscuro);
-    border-bottom: 3px solid var(--tinta);
+    background-color: var(--tinta);
+    border-bottom: 3px solid var(--rosa-neon);
     box-shadow: none;
 }
 
@@ -37,11 +43,18 @@ body.pagina-reservas .menu a {
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.06em;
+    color: var(--claro);
 }
 
 body.pagina-reservas .menu a:hover {
     color: var(--celeste-neon);
     text-shadow: none;
+}
+
+body.pagina-reservas footer {
+    background: var(--tinta);
+    border-top: 3px solid var(--rosa-neon);
+    color: var(--claro);
 }
 
 /* -------------------------------------------------------------------------
@@ -124,13 +137,13 @@ body.pagina-reservas .menu a:hover {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: rgba(244, 239, 226, 0.45);
+    color: rgba(23, 22, 28, 0.4);
     transition: border-color 0.25s, color 0.25s;
 }
 
 .pasos-indicador__num {
     font-weight: 800;
-    color: rgba(244, 239, 226, 0.3);
+    color: rgba(23, 22, 28, 0.28);
     transition: color 0.25s;
 }
 
@@ -295,6 +308,34 @@ body.pagina-reservas .menu a:hover {
     background: var(--tinta);
     padding: 0.2rem 0.55rem;
     margin-bottom: 0.3rem;
+}
+
+/* Afordancia de fotos: siempre visible (no depende de :hover, que no
+   existe en pantallas táctiles). */
+.tarjeta-servicio__ver-fotos {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--papel);
+    border: 2px solid var(--tinta);
+    color: var(--tinta);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.tarjeta-servicio__ver-fotos:hover {
+    background: var(--rosa-neon);
+    color: var(--papel);
+    border-color: var(--rosa-neon);
 }
 
 .tarjeta-servicio h3 {
@@ -468,7 +509,7 @@ body.pagina-reservas .menu a:hover {
     flex-direction: column;
     gap: 0.15rem;
     font-size: 0.85rem;
-    color: var(--texto-blanco);
+    color: var(--claro);
 }
 
 .carrito-resumen__cantidad {
@@ -517,7 +558,7 @@ body.pagina-reservas .menu a:hover {
     left: 0;
     right: 0;
     height: 14px;
-    background: var(--fondo-oscuro);
+    background: var(--tinta);
     clip-path: polygon(
         0% 0%, 5% 100%, 10% 0%, 15% 100%, 20% 0%, 25% 100%, 30% 0%, 35% 100%,
         40% 0%, 45% 100%, 50% 0%, 55% 100%, 60% 0%, 65% 100%, 70% 0%, 75% 100%,
@@ -643,9 +684,12 @@ body.pagina-reservas .menu a:hover {
    ------------------------------------------------------------------------- */
 
 .confirmacion-final {
+    padding: 2rem 0 3rem;
+}
+
+.paso.confirmacion-final.activo {
     display: flex;
     justify-content: center;
-    padding: 2rem 0 3rem;
 }
 
 .ticket-confirmacion {
@@ -764,14 +808,6 @@ body.pagina-reservas .menu a:hover {
 .pagina-reservas .boton-celeste:active {
     transform: translate(0, 0);
     box-shadow: 2px 2px 0 var(--tinta);
-}
-
-/* -------------------------------------------------------------------------
-   Footer (coherencia mínima en esta página)
-   ------------------------------------------------------------------------- */
-
-.pagina-reservas footer {
-    border-top: 3px solid var(--tinta);
 }
 
 /* -------------------------------------------------------------------------
