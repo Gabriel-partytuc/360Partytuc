@@ -84,12 +84,13 @@
                     <input type="tel" id="telefono" placeholder="3814187925">
                 </div>
             </div>
+            <p class="mensaje-error" id="error-confirmacion" style="display:none;"></p>
             <button class="boton boton-rosa" id="btn-confirmar-reserva">Confirmar reserva</button>
         </section>
 
         <!-- Paso: confirmación final -->
         <section class="paso confirmacion-final" id="paso-confirmacion">
-            <h2>🎉 ¡Reserva registrada!</h2>
+            <h2>¡Reserva registrada!</h2>
             <p>Tu reserva quedó guardada como <strong>pendiente</strong>.</p>
             <p class="id-reserva" id="texto-id-reserva"></p>
             <p>Te vamos a redirigir a WhatsApp para coordinar la seña. Si cerrás esta pestaña, tu reserva ya está guardada de todas formas.</p>
@@ -100,7 +101,7 @@
     <!-- Modal de fotos -->
     <div class="modal-fotos" id="modal-fotos">
         <div class="modal-fotos-contenido">
-            <button class="modal-fotos-cerrar" id="cerrar-modal">✕</button>
+            <button class="modal-fotos-cerrar" id="cerrar-modal">&times;</button>
             <h3 id="modal-fotos-titulo"></h3>
             <img id="modal-fotos-img" src="img/placeholder-servicio.svg" alt="Foto del servicio">
         </div>
@@ -116,7 +117,7 @@
 
     <!-- Drawer del carrito -->
     <div class="carrito-drawer" id="carrito-drawer">
-        <button class="modal-fotos-cerrar" id="cerrar-drawer">✕</button>
+        <button class="modal-fotos-cerrar" id="cerrar-drawer">&times;</button>
         <h2>Tu carrito</h2>
         <div id="lista-carrito"></div>
         <p style="margin-top:1rem;">Total: <strong id="drawer-total">$0</strong></p>

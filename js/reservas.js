@@ -93,7 +93,7 @@ function crearCardServicio(servicio, esCombo) {
 
   const badge = servicio.disponible === null
     ? ""
-    : `<span class="badge-disponibilidad ${servicio.disponible ? "badge-disponible" : "badge-no-disponible"}">${servicio.disponible ? "✅ Disponible" : "❌ Sin stock"}</span>`;
+    : `<span class="badge-disponibilidad ${servicio.disponible ? "badge-disponible" : "badge-no-disponible"}">${servicio.disponible ? "Disponible" : "Sin stock"}</span>`;
 
   card.innerHTML = `
     <div class="zona-preview">
@@ -264,7 +264,7 @@ function renderDrawerCarrito() {
     }
     const div = document.createElement("div");
     div.className = "item-carrito";
-    div.innerHTML = `<span>${nombre}</span><button class="quitar">✕</button>`;
+    div.innerHTML = `<span>${nombre}</span><button class="quitar">&times;</button>`;
     div.querySelector(".quitar").addEventListener("click", () => quitarDelCarrito(idx));
     lista.appendChild(div);
   });
@@ -395,15 +395,33 @@ async function abrirFlujoAdicionales(servicio) {
   }
 }
 
+function mostrarErrorConfirmacion(mensaje) {
+  const el = document.getElementById("error-confirmacion");
+  el.textContent = mensaje;
+  el.style.display = "block";
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function ocultarErrorConfirmacion() {
+  const el = document.getElementById("error-confirmacion");
+  el.style.display = "none";
+  el.textContent = "";
+}
+
 async function confirmarReserva() {
   const { fecha, horaDesde, localidad } = datosEvento();
   const direccion = document.getElementById("direccion").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
 
   if (!fecha || !horaDesde || !localidad || !direccion || !telefono || carrito.length === 0) {
-    alert("Completá fecha, horario, localidad, dirección, teléfono y agregá al menos un servicio al carrito.");
+    mostrarErrorConfirmacion("Completá fecha, horario, localidad, dirección, teléfono y agregá al menos un servicio al carrito.");
     return;
   }
+
+  ocultarErrorConfirmacion();
+  const boton = document.getElementById("btn-confirmar-reserva");
+  boton.disabled = true;
+  boton.textContent = "Confirmando...";
 
   try {
     const res = await fetch(`${API_BASE}/confirmar-reserva`, {
@@ -414,7 +432,7 @@ async function confirmarReserva() {
     const data = await res.json();
 
     if (res.status === 409 || data.disponible === false) {
-      alert("Uno de los servicios elegidos ya no tiene disponibilidad para ese horario. Volvé a revisar el catálogo.");
+      mostrarErrorConfirmacion("Uno de los servicios elegidos ya no tiene disponibilidad para ese horario. Volvé a revisar el catálogo.");
       cargarCatalogo();
       return;
     }
@@ -425,9 +443,13 @@ async function confirmarReserva() {
 
     document.getElementById("texto-id-reserva").textContent = data.idReserva;
     document.getElementById("link-whatsapp").href = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(data.mensajeWhatsapp)}`;
+    document.querySelectorAll(".catalogo-grupo, .panel-datos").forEach(el => { el.style.display = "none"; });
     mostrarPaso("paso-confirmacion");
   } catch (e) {
     console.error("Error confirmando reserva", e);
-    alert("Hubo un error al confirmar la reserva. Probá de nuevo o escribinos por WhatsApp.");
+    mostrarErrorConfirmacion("Hubo un error al confirmar la reserva. Probá de nuevo o escribinos por WhatsApp.");
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Confirmar reserva";
   }
 }
