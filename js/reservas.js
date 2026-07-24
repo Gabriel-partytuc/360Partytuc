@@ -218,6 +218,12 @@ function totalCarritoEstimado() {
     } else {
       const s = catalogoCompleto.find(x => x.id === it.idServicio);
       if (s) total += Number(s.precio) || 0;
+      if (it.tipo === "combo" && Array.isArray(it.elecciones)) {
+        it.elecciones.forEach(idEleccion => {
+          const elegido = catalogoCompleto.find(x => x.id === idEleccion);
+          if (elegido) total += Number(elegido.precio) || 0;
+        });
+      }
     }
   });
   total += costoLocalidadActual();
@@ -251,6 +257,10 @@ function renderDrawerCarrito() {
     } else {
       const s = catalogoCompleto.find(x => x.id === it.idServicio);
       nombre = s ? s.nombre : it.idServicio;
+      if (it.tipo === "combo" && Array.isArray(it.elecciones) && it.elecciones.length > 0) {
+        const nombresElegidos = it.elecciones.map(id => catalogoCompleto.find(x => x.id === id)?.nombre).filter(Boolean);
+        if (nombresElegidos.length) nombre += ` (${nombresElegidos.join(", ")})`;
+      }
     }
     const div = document.createElement("div");
     div.className = "item-carrito";
