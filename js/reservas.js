@@ -65,6 +65,8 @@ async function cargarCatalogo() {
     params.set("horaDesde", horaDesde);
     params.set("horaHasta", horaHasta);
   }
+  const carritoIds = Array.from(idsEnCarrito());
+  if (carritoIds.length > 0) params.set("carritoIds", carritoIds.join(","));
   try {
     const res = await fetch(`${API_BASE}/catalogo?${params.toString()}`);
     const data = await res.json();
@@ -196,7 +198,7 @@ function agregarAlCarrito(item) {
   carrito.push(item);
   guardarCarrito();
   actualizarBarraCarrito();
-  renderCatalogo();
+  cargarCatalogo();
 }
 
 function quitarDelCarrito(index) {
@@ -204,7 +206,7 @@ function quitarDelCarrito(index) {
   guardarCarrito();
   actualizarBarraCarrito();
   renderDrawerCarrito();
-  renderCatalogo();
+  cargarCatalogo();
 }
 
 function costoLocalidadActual() {
