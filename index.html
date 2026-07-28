@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>360 Party | Captura el movimiento</title>
     <link rel="stylesheet" href="css/estilos.css">
-    <link rel="icon" href="img/logo.jpg">
+    <link rel="icon" href="img/logo.webp">
 </head>
 <body>
     <!-- Barra de Navegación -->
     <header class="navegacion">
         <div class="logo">
-            <img src="img/logo.jpg" alt="360 Party - Capture el movimiento">
+            <img srcset="img/logo.webp" type="image/webp" >
         </div>
         <nav>
             <ul class="menu">
@@ -27,7 +27,7 @@
     <!-- Sección Inicio -->
     <section id="inicio" class="inicio">
         <div class="contenido-inicio">
-            <img src="img/logo.jpg" alt="360 Party" class="logo-portada">
+            <img srcset="img/logo.webp" type="image/webp" alt="360 Party" class="logo-portada">
             <h1>360 PARTY</h1>
             <p class="eslogan">CAPTURE EL MOVIMIENTO</p>
             <p>Tecnología y diversión para crear recuerdos inolvidables en tu fiesta, casamiento, 15 años o evento corporativo en Tucumán y alrededores.</p>
@@ -38,20 +38,19 @@
         </div>
     </section>
 
-    <!-- Sección Servicios -->
     <section id="servicios" class="servicios">
-        <h2>NUESTROS SERVICIOS</h2>
-        <div class="tarjetas-servicios">
+    <h2>NUESTROS SERVICIOS</h2>
+    <div class="tarjetas-servicios">
 
-            <!-- Plataforma 360° -->
-            <div class="tarjeta">
-                <h3>Plataforma 360°</h3>
-                <p>Transformá cada celebración en una experiencia única. Diámetro 110 cm, soporta 200 kg, velocidad regulable, aro LED RGB y cámaras GoPro profesionales.</p>
-                <div class="botones-tarjeta">
-                    <a href="https://drive.google.com/drive/folders/19vlUFDXjf9LJiPnX25cb1C7JwnTymN4P" target="_blank" class="boton-enlace">📸 Ver galería</a>
-                    <a href="#contacto" class="boton-solicitar">📩 Solicitar servicio</a>
-                </div>
+        <!-- Plataforma 360° -->
+        <div class="tarjeta" style="background-image: linear-gradient(rgba(18,18,31,0.8), rgba(18,18,31,0.9)), url('img/servicio-360.jpg');">
+            <h3>Plataforma 360°</h3>
+            <p>Transformá cada celebración en una experiencia única. Diámetro 110 cm, soporta 200 kg, velocidad regulable, aro LED RGB y cámaras GoPro profesionales.</p>
+            <div class="botones-tarjeta">
+                <a href="https://drive.google.com/drive/folders/19vlUFDXjf9LJiPnX25cb1C7JwnTymN4P" target="_blank" class="boton-enlace" onclick="event.stopPropagation()">Ver galería</a>
+                <a href="#contacto" class="boton-solicitar" onclick="event.stopPropagation()">Solicitar servicio</a>
             </div>
+        </div>
 
             <!-- Cabina Pixel LED -->
             <div class="tarjeta">
