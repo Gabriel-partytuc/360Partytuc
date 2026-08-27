@@ -6,31 +6,22 @@
    ========================================================================= */
 
 body.pagina-reservas {
-    /* Reasigna la paleta compartida SOLO en esta página: la cabecera
-       (.navegacion, que vive en estilos.css) hereda estos valores porque
-       son variables CSS, así que el header queda coherente con el resto
-       sin tocar el archivo compartido. Modo claro: --fondo-oscuro y
-       --texto-blanco ahora valen "fondo de página" (claro) y "texto
-       principal" (tinta oscura) — el nombre quedó del tema anterior. */
-    --rosa-neon: #E31C63;
-    --celeste-neon: #C77D00;
-    --fondo-oscuro: #F4EEDF;
-    --texto-blanco: #17161C;
-    --sombra-rosa: 3px 3px 0 #E31C63;
-    --sombra-celeste: 3px 3px 0 #C77D00;
-
+    /* La paleta de marca (rosa-neon, celeste-neon, fondo-oscuro, texto-blanco,
+       sombra-rosa, sombra-celeste) NO se reasigna acá: se deja heredar de
+       :root en estilos.css para que reservas.html use exactamente los
+       mismos colores que index.html. Acá solo se agregan los tokens
+       propios de esta página para el look "ticket/papel". */
     --tinta: #17161C;
     --papel: #FFFDF7;
     --papel-sombra: #EDE4CC;
     --linea: rgba(23, 22, 28, 0.15);
-    --claro: #F4EFE2;
 
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* La cabecera y el pie se mantienen oscuros a propósito: son el marco
-   que enmarca el logo (que trae su propio fondo negro) y el ancla visual
-   de la página, mientras el resto pasa a modo claro. */
+/* La cabecera y el pie se mantienen con fondo "tinta" (casi negro) a
+   propósito: son el marco que enmarca el logo (que trae su propio fondo
+   negro) y el ancla visual de la página. */
 body.pagina-reservas .navegacion {
     background-color: var(--tinta);
     border-bottom: 3px solid var(--rosa-neon);
@@ -43,7 +34,7 @@ body.pagina-reservas .menu a {
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 0.06em;
-    color: var(--claro);
+    color: var(--texto-blanco);
 }
 
 body.pagina-reservas .menu a:hover {
@@ -54,7 +45,7 @@ body.pagina-reservas .menu a:hover {
 body.pagina-reservas footer {
     background: var(--tinta);
     border-top: 3px solid var(--rosa-neon);
-    color: var(--claro);
+    color: var(--texto-blanco);
 }
 
 /* -------------------------------------------------------------------------
@@ -137,13 +128,13 @@ body.pagina-reservas footer {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: rgba(23, 22, 28, 0.4);
+    color: rgba(255, 255, 255, 0.4);
     transition: border-color 0.25s, color 0.25s;
 }
 
 .pasos-indicador__num {
     font-weight: 800;
-    color: rgba(23, 22, 28, 0.28);
+    color: rgba(255, 255, 255, 0.28);
     transition: color 0.25s;
 }
 
@@ -509,7 +500,7 @@ body.pagina-reservas footer {
     flex-direction: column;
     gap: 0.15rem;
     font-size: 0.85rem;
-    color: var(--claro);
+    color: var(--texto-blanco);
 }
 
 .carrito-resumen__cantidad {

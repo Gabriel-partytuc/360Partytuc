@@ -1,4 +1,4 @@
-/ Animación suave al hacer scroll
+// Animación suave al hacer scroll
 document.addEventListener('DOMContentLoaded', () => {
     // Resaltar enlace del menú según la sección visible
     const secciones = document.querySelectorAll('section');

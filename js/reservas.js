@@ -429,11 +429,12 @@ function ocultarErrorConfirmacion() {
 
 async function confirmarReserva() {
   const { fecha, horaDesde, localidad } = datosEvento();
+  const nombre = document.getElementById("nombre").value.trim();
   const direccion = document.getElementById("direccion").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
 
-  if (!fecha || !horaDesde || !localidad || !direccion || !telefono || carrito.length === 0) {
-    mostrarErrorConfirmacion("Completá fecha, horario, localidad, dirección, teléfono y agregá al menos un servicio al carrito.");
+  if (!fecha || !horaDesde || !localidad || !nombre || !direccion || !telefono || carrito.length === 0) {
+    mostrarErrorConfirmacion("Completá tu nombre, fecha, horario, localidad, dirección, teléfono y agregá al menos un servicio al carrito.");
     return;
   }
 
@@ -446,7 +447,7 @@ async function confirmarReserva() {
     const res = await fetch(`${API_BASE}/confirmar-reserva`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fecha, horaDesde, direccion, localidad, telefono, carrito })
+      body: JSON.stringify({ fecha, horaDesde, direccion, localidad, telefono, nombre, carrito })
     });
     const data = await res.json();
 
