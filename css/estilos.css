@@ -59,6 +59,40 @@ body {
     text-shadow: var(--sombra-celeste);
 }
 
+.menu-hamburguesa {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 101;
+}
+
+.menu-hamburguesa span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: var(--texto-blanco);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.menu-hamburguesa.abierto span:nth-child(1) {
+    transform: translateY(8.5px) rotate(45deg);
+}
+
+.menu-hamburguesa.abierto span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-hamburguesa.abierto span:nth-child(3) {
+    transform: translateY(-8.5px) rotate(-45deg);
+}
+
 /* Sección Inicio */
 .inicio {
     min-height: 92vh;
@@ -374,11 +408,60 @@ footer {
     margin-bottom: 1rem;
 }
 
+/* Botón flotante de WhatsApp */
+.boton-flotante-wpp {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s;
+}
+
+.boton-flotante-wpp img {
+    width: 32px;
+    height: 32px;
+}
+
+.boton-flotante-wpp:hover {
+    transform: scale(1.08);
+}
+
 /* Adaptación a celulares */
 @media (max-width: 768px) {
+    .menu-hamburguesa {
+        display: flex;
+    }
     .menu {
-        gap: 1rem;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0;
+        background-color: var(--fondo-oscuro);
+        max-height: 0;
+        overflow: hidden;
         font-size: 0.9rem;
+        transition: max-height 0.3s ease;
+    }
+    .menu.abierto {
+        max-height: 400px;
+    }
+    .menu li {
+        width: 100%;
+    }
+    .menu a {
+        display: block;
+        padding: 1rem 5%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
     .inicio h1 { font-size: 3.5rem; }
     .eslogan { font-size: 1.5rem; letter-spacing: 1px; }

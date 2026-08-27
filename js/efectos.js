@@ -23,4 +23,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Menú hamburguesa (mobile)
+    const botonHamburguesa = document.querySelector('.menu-hamburguesa');
+    const menu = document.querySelector('.menu');
+    if (botonHamburguesa && menu) {
+        botonHamburguesa.addEventListener('click', () => {
+            const abierto = menu.classList.toggle('abierto');
+            botonHamburguesa.classList.toggle('abierto', abierto);
+            botonHamburguesa.setAttribute('aria-expanded', abierto);
+        });
+
+        menu.querySelectorAll('a').forEach(enlace => {
+            enlace.addEventListener('click', () => {
+                menu.classList.remove('abierto');
+                botonHamburguesa.classList.remove('abierto');
+                botonHamburguesa.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
 });
