@@ -151,7 +151,7 @@ function mostrarModalFotos(servicio, porClick) {
   const modal = document.getElementById("modal-fotos");
   document.getElementById("modal-fotos-titulo").textContent = servicio.nombre;
   const img = document.getElementById("modal-fotos-img");
-  img.src = (servicio.fotos && servicio.fotos[0]) || "img/placeholder-servicio.svg";
+  img.src = (servicio.fotos && servicio.fotos[0]) ? `img/${servicio.fotos[0]}` : "img/placeholder-servicio.svg";
   modal.classList.add("abierto");
   modalAbiertoPorClick = !!porClick;
 }
