@@ -341,6 +341,16 @@ body.pagina-reservas footer {
     box-shadow: 8px 8px 0 var(--rosa-neon);
 }
 
+/* Ocupa todo el alto disponible de la card (las cards de una misma fila
+   quedan parejas por el grid) para que "Agregar al carrito" quede siempre
+   alineado abajo, sin importar cuanto texto tenga cada servicio. */
+.zona-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+}
+
 .tarjeta-servicio__categoria {
     align-self: flex-start;
     font-size: 0.68rem;
