@@ -3,10 +3,9 @@ const WHATSAPP_NUMERO = "543814187925";
 const CARRITO_STORAGE_KEY = "party360_carrito";
 const CARRITO_TTL_MIN = 30;
 
-let catalogo = { combos: [], individuales: [] };
+let catalogo = { individuales: [] };
 let localidades = [];
 let carrito = cargarCarritoGuardado();
-let comboEnEleccion = null;
 let servicioParaAdicionales = null;
 let adicionalesInfo = {};
 let modalAbiertoPorClick = false;
@@ -87,7 +86,7 @@ function idsEnCarrito() {
   return ids;
 }
 
-function crearCardServicio(servicio, esCombo) {
+function crearCardServicio(servicio) {
   const enCarrito = idsEnCarrito().has(servicio.id);
   const card = document.createElement("div");
   card.className = "tarjeta-servicio";
@@ -99,7 +98,6 @@ function crearCardServicio(servicio, esCombo) {
 
   card.innerHTML = `
     <div class="zona-preview">
-      <span class="tarjeta-servicio__categoria">${esCombo ? "Combo" : "Individual"}</span>
       <button type="button" class="tarjeta-servicio__ver-fotos">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
         Ver fotos
@@ -127,24 +125,17 @@ function crearCardServicio(servicio, esCombo) {
 
   const boton = card.querySelector(".boton-agregar");
   boton.addEventListener("click", () => {
-    if (esCombo) {
-      iniciarEleccionCombo(servicio);
-    } else {
-      agregarAlCarrito({ idServicio: servicio.id, tipo: "individual", elecciones: [], adicionales: [] });
-      abrirFlujoAdicionales(servicio);
-    }
+    agregarAlCarrito({ idServicio: servicio.id, tipo: "individual", elecciones: [], adicionales: [] });
+    abrirFlujoAdicionales(servicio);
   });
 
   return card;
 }
 
 function renderCatalogo() {
-  const gridCombos = document.getElementById("grid-combos");
   const gridIndividuales = document.getElementById("grid-individuales");
-  gridCombos.innerHTML = "";
   gridIndividuales.innerHTML = "";
-  (catalogo.combos || []).forEach(c => gridCombos.appendChild(crearCardServicio(c, true)));
-  (catalogo.individuales || []).forEach(s => gridIndividuales.appendChild(crearCardServicio(s, false)));
+  (catalogo.individuales || []).forEach(s => gridIndividuales.appendChild(crearCardServicio(s)));
 }
 
 function mostrarModalFotos(servicio, porClick) {
@@ -217,7 +208,7 @@ function costoLocalidadActual() {
 }
 
 function totalCarritoEstimado() {
-  const catalogoCompleto = [...catalogo.combos, ...catalogo.individuales];
+  const catalogoCompleto = [...(catalogo.combos || []), ...catalogo.individuales];
   let total = 0;
   carrito.forEach(it => {
     if (it.tipo === "adicional") {
@@ -256,7 +247,7 @@ function cerrarCarrito() {
 function renderDrawerCarrito() {
   const lista = document.getElementById("lista-carrito");
   lista.innerHTML = "";
-  const catalogoCompleto = [...catalogo.combos, ...catalogo.individuales];
+  const catalogoCompleto = [...(catalogo.combos || []), ...catalogo.individuales];
   carrito.forEach((it, idx) => {
     let nombre;
     if (it.tipo === "adicional") {
@@ -301,80 +292,6 @@ function mostrarPaso(idPaso) {
   document.getElementById(idPaso).classList.add("activo");
   document.getElementById(idPaso).scrollIntoView({ behavior: "smooth" });
   actualizarIndicadorPasos(idPaso);
-}
-
-function avisarFaltanDatosEvento() {
-  const panel = document.querySelector(".panel-datos");
-  panel.scrollIntoView({ behavior: "smooth", block: "center" });
-  panel.classList.add("panel-datos-error");
-  setTimeout(() => panel.classList.remove("panel-datos-error"), 2000);
-}
-
-async function iniciarEleccionCombo(combo) {
-  const { fecha, horaDesde, horaHasta } = datosEvento();
-  if (!fecha || !horaDesde || !horaHasta) {
-    avisarFaltanDatosEvento();
-    return;
-  }
-  comboEnEleccion = combo;
-  try {
-    const res = await fetch(`${API_BASE}/opciones-eleccion`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fecha, horaDesde, horaHasta, idCombo: combo.id, carritoIds: Array.from(idsEnCarrito()) })
-    });
-    const data = await res.json();
-    if (!data.cantidadElecciones) {
-      agregarAlCarrito({ idServicio: combo.id, tipo: "combo", elecciones: [], adicionales: [] });
-      abrirFlujoAdicionales(combo);
-      return;
-    }
-    renderEleccionCombo(data);
-    mostrarPaso("paso-eleccion");
-  } catch (e) {
-    console.error("Error obteniendo opciones de elección", e);
-  }
-}
-
-function renderEleccionCombo(data) {
-  const cantidadElecciones = data.cantidadElecciones;
-  const elegidos = [];
-  let opcionesDisponibles = data.opciones || [];
-
-  function pintar() {
-    const cont = document.getElementById("lista-eleccion");
-    cont.innerHTML = "";
-    const titulo = document.querySelector("#paso-eleccion h2");
-    if (titulo) {
-      titulo.textContent = cantidadElecciones > 1
-        ? `Elegí el servicio ${elegidos.length + 1} de ${cantidadElecciones} para tu combo`
-        : "Elegí el servicio de tu combo";
-    }
-    opcionesDisponibles.forEach(op => {
-      const card = document.createElement("div");
-      card.className = "tarjeta-servicio";
-      card.innerHTML = `
-        <h3>${op.nombre}</h3>
-        <p class="descripcion">${op.descripcion || ""}</p>
-        <p class="precio">${formatoPrecio(op.precio)}</p>
-        <button class="boton-agregar">Elegir</button>
-      `;
-      card.querySelector("button").addEventListener("click", () => {
-        elegidos.push(op.id);
-        opcionesDisponibles = opcionesDisponibles.filter(o => o.id !== op.id);
-        if (elegidos.length >= cantidadElecciones) {
-          agregarAlCarrito({ idServicio: comboEnEleccion.id, tipo: "combo", elecciones: elegidos, adicionales: [] });
-          document.getElementById("paso-eleccion").classList.remove("activo");
-          abrirFlujoAdicionales(comboEnEleccion);
-        } else {
-          pintar();
-        }
-      });
-      cont.appendChild(card);
-    });
-  }
-
-  pintar();
 }
 
 async function abrirFlujoAdicionales(servicio) {

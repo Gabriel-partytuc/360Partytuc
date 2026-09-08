@@ -238,6 +238,58 @@ body.pagina-reservas footer {
 }
 
 /* -------------------------------------------------------------------------
+   Aviso de combos (redirige a WhatsApp)
+   ------------------------------------------------------------------------- */
+
+.aviso-combos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 2.5rem 0 0;
+    padding: 1.1rem 1.4rem;
+    background: var(--papel);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    box-shadow: 5px 5px 0 var(--celeste-neon);
+}
+
+.aviso-combos__texto {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 46ch;
+}
+
+.aviso-combos__texto strong {
+    display: block;
+    font-family: 'Anton', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    font-size: 1.05rem;
+    margin-bottom: 0.2rem;
+}
+
+.aviso-combos__boton {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+    .aviso-combos {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .aviso-combos__texto {
+        max-width: none;
+    }
+}
+
+/* -------------------------------------------------------------------------
    Catálogo
    ------------------------------------------------------------------------- */
 
