@@ -133,7 +133,12 @@
         <div class="modal-fotos-contenido">
             <button class="boton-cerrar" id="cerrar-modal">&times;</button>
             <h3 id="modal-fotos-titulo"></h3>
-            <img id="modal-fotos-img" src="img/placeholder-servicio.svg" alt="Foto del servicio">
+            <div class="modal-fotos-carrusel">
+                <button type="button" class="modal-fotos-flecha modal-fotos-flecha--izq" id="modal-fotos-anterior" aria-label="Foto anterior">&#10094;</button>
+                <img id="modal-fotos-img" src="img/placeholder-servicio.svg" alt="Foto del servicio">
+                <button type="button" class="modal-fotos-flecha modal-fotos-flecha--der" id="modal-fotos-siguiente" aria-label="Foto siguiente">&#10095;</button>
+            </div>
+            <div class="modal-fotos-puntos" id="modal-fotos-puntos"></div>
         </div>
     </div>
 

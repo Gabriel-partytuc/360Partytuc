@@ -390,6 +390,17 @@ body.pagina-reservas footer {
     letter-spacing: 0.005em;
 }
 
+.tarjeta-servicio__duracion {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.65;
+}
+
 .tarjeta-servicio .descripcion {
     font-size: 0.82rem;
     line-height: 1.55;
@@ -497,11 +508,62 @@ body.pagina-reservas footer {
     padding-right: 2rem;
 }
 
-.modal-fotos-contenido img {
+.modal-fotos-carrusel {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.modal-fotos-carrusel img {
     max-width: 100%;
     border: 2px solid var(--tinta);
-    margin-top: 1rem;
     display: block;
+}
+
+.modal-fotos-flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.2rem;
+    height: 2.2rem;
+    border: 2px solid var(--tinta);
+    background: var(--papel);
+    color: var(--tinta);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.modal-fotos-flecha:hover {
+    background: var(--rosa-neon);
+    border-color: var(--rosa-neon);
+}
+
+.modal-fotos-flecha--izq {
+    left: 0.6rem;
+}
+
+.modal-fotos-flecha--der {
+    right: 0.6rem;
+}
+
+.modal-fotos-puntos {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+}
+
+.modal-fotos-punto {
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 2px solid var(--tinta);
+    background: var(--papel);
+    cursor: pointer;
+}
+
+.modal-fotos-punto.activo {
+    background: var(--rosa-neon);
+    border-color: var(--rosa-neon);
 }
 
 .boton-cerrar {

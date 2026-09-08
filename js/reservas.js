@@ -30,6 +30,16 @@ function formatoPrecio(n) {
   return "$" + Number(n || 0).toLocaleString("es-AR");
 }
 
+function formatoDuracion(min) {
+  const m = Number(min) || 0;
+  if (m <= 0) return "";
+  const horas = Math.floor(m / 60);
+  const minutos = m % 60;
+  if (horas === 0) return `${minutos} min`;
+  if (minutos === 0) return `${horas} h`;
+  return `${horas} h ${minutos} min`;
+}
+
 function datosEvento() {
   return {
     fecha: document.getElementById("fecha").value,
@@ -103,6 +113,7 @@ function crearCardServicio(servicio) {
         Ver fotos
       </button>
       <h3>${servicio.nombre}</h3>
+      ${servicio.duracionMin ? `<p class="tarjeta-servicio__duracion"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>${formatoDuracion(servicio.duracionMin)}</p>` : ""}
       <p class="descripcion">${servicio.descripcion || ""}</p>
       ${badge}
       <p class="precio">${formatoPrecio(servicio.precio)}</p>
@@ -138,13 +149,43 @@ function renderCatalogo() {
   (catalogo.individuales || []).forEach(s => gridIndividuales.appendChild(crearCardServicio(s)));
 }
 
+let fotosModalActuales = [];
+let indiceFotoModal = 0;
+
 function mostrarModalFotos(servicio, porClick) {
   const modal = document.getElementById("modal-fotos");
   document.getElementById("modal-fotos-titulo").textContent = servicio.nombre;
-  const img = document.getElementById("modal-fotos-img");
-  img.src = (servicio.fotos && servicio.fotos[0]) ? `img/${servicio.fotos[0]}` : "img/placeholder-servicio.svg";
+  fotosModalActuales = (servicio.fotos && servicio.fotos.length) ? servicio.fotos : [];
+  indiceFotoModal = 0;
+  pintarFotoModal();
   modal.classList.add("abierto");
   modalAbiertoPorClick = !!porClick;
+}
+
+function pintarFotoModal() {
+  const foto = fotosModalActuales[indiceFotoModal];
+  document.getElementById("modal-fotos-img").src = foto ? `img/${foto}` : "img/placeholder-servicio.svg";
+
+  const hayVarias = fotosModalActuales.length > 1;
+  document.getElementById("modal-fotos-anterior").style.display = hayVarias ? "" : "none";
+  document.getElementById("modal-fotos-siguiente").style.display = hayVarias ? "" : "none";
+
+  const puntos = document.getElementById("modal-fotos-puntos");
+  puntos.innerHTML = "";
+  if (hayVarias) {
+    fotosModalActuales.forEach((_, i) => {
+      const punto = document.createElement("span");
+      punto.className = "modal-fotos-punto" + (i === indiceFotoModal ? " activo" : "");
+      punto.addEventListener("click", () => { indiceFotoModal = i; pintarFotoModal(); });
+      puntos.appendChild(punto);
+    });
+  }
+}
+
+function cambiarFotoModal(delta) {
+  if (fotosModalActuales.length < 2) return;
+  indiceFotoModal = (indiceFotoModal + delta + fotosModalActuales.length) % fotosModalActuales.length;
+  pintarFotoModal();
 }
 
 function cerrarModalFotos() {
@@ -159,6 +200,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("modal-fotos").addEventListener("mouseleave", () => {
     if (!modalAbiertoPorClick) cerrarModalFotos();
+  });
+  document.getElementById("modal-fotos-anterior").addEventListener("click", () => cambiarFotoModal(-1));
+  document.getElementById("modal-fotos-siguiente").addEventListener("click", () => cambiarFotoModal(1));
+  document.addEventListener("keydown", (ev) => {
+    if (!document.getElementById("modal-fotos").classList.contains("abierto")) return;
+    if (ev.key === "ArrowLeft") cambiarFotoModal(-1);
+    else if (ev.key === "ArrowRight") cambiarFotoModal(1);
+    else if (ev.key === "Escape") cerrarModalFotos();
   });
 
   document.getElementById("fecha").addEventListener("change", cargarCatalogo);
