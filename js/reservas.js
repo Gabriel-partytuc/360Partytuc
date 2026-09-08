@@ -200,6 +200,32 @@ function quitarDelCarrito(index) {
   cargarCatalogo();
 }
 
+function cantidadAdicionalEnCarrito(idAdicional) {
+  return carrito.filter(it => it.tipo === "adicional" && it.idServicio === idAdicional).length;
+}
+
+function cantidadesAdicionalesEnCarrito() {
+  const cantidades = {};
+  carrito.forEach(it => {
+    if (it.tipo === "adicional") cantidades[it.idServicio] = (cantidades[it.idServicio] || 0) + 1;
+  });
+  return Object.entries(cantidades).map(([id, cantidad]) => ({ id, cantidad }));
+}
+
+// Los adicionales (ej. "hora extra") se pueden sumar varias veces: cada unidad
+// es una entrada propia en el carrito con el mismo idServicio; el backend las
+// suma sin deduplicar (ver nodo "Validar y Armar Reserva" del workflow).
+function actualizarCantidadAdicional(idAdicional, delta) {
+  if (delta > 0) {
+    carrito.push({ idServicio: idAdicional, tipo: "adicional", elecciones: [], adicionales: [] });
+  } else {
+    const idx = carrito.findIndex(it => it.tipo === "adicional" && it.idServicio === idAdicional);
+    if (idx !== -1) carrito.splice(idx, 1);
+  }
+  guardarCarrito();
+  actualizarBarraCarrito();
+}
+
 function costoLocalidadActual() {
   const nombre = document.getElementById("localidad").value;
   if (!nombre) return 0;
@@ -249,21 +275,29 @@ function renderDrawerCarrito() {
   lista.innerHTML = "";
   const catalogoCompleto = [...(catalogo.combos || []), ...catalogo.individuales];
   carrito.forEach((it, idx) => {
-    let nombre;
-    if (it.tipo === "adicional") {
-      nombre = adicionalesInfo[it.idServicio]?.nombre || it.idServicio;
-    } else {
-      const s = catalogoCompleto.find(x => x.id === it.idServicio);
-      nombre = s ? s.nombre : it.idServicio;
-      if (it.tipo === "combo" && Array.isArray(it.elecciones) && it.elecciones.length > 0) {
-        const nombresElegidos = it.elecciones.map(id => catalogoCompleto.find(x => x.id === id)?.nombre).filter(Boolean);
-        if (nombresElegidos.length) nombre += ` (${nombresElegidos.join(", ")})`;
-      }
+    if (it.tipo === "adicional") return; // los adicionales se listan agrupados por cantidad, más abajo
+    const s = catalogoCompleto.find(x => x.id === it.idServicio);
+    let nombre = s ? s.nombre : it.idServicio;
+    if (it.tipo === "combo" && Array.isArray(it.elecciones) && it.elecciones.length > 0) {
+      const nombresElegidos = it.elecciones.map(id => catalogoCompleto.find(x => x.id === id)?.nombre).filter(Boolean);
+      if (nombresElegidos.length) nombre += ` (${nombresElegidos.join(", ")})`;
     }
     const div = document.createElement("div");
     div.className = "item-carrito";
     div.innerHTML = `<span>${nombre}</span><button class="quitar">&times;</button>`;
     div.querySelector(".quitar").addEventListener("click", () => quitarDelCarrito(idx));
+    lista.appendChild(div);
+  });
+  cantidadesAdicionalesEnCarrito().forEach(({ id, cantidad }) => {
+    const nombre = adicionalesInfo[id]?.nombre || id;
+    const div = document.createElement("div");
+    div.className = "item-carrito";
+    div.innerHTML = `<span>${nombre}${cantidad > 1 ? ` ×${cantidad}` : ""}</span><button class="quitar">&times;</button>`;
+    div.querySelector(".quitar").addEventListener("click", () => {
+      actualizarCantidadAdicional(id, -1);
+      renderDrawerCarrito();
+      cargarCatalogo();
+    });
     lista.appendChild(div);
   });
   const costoLocalidad = costoLocalidadActual();
@@ -309,21 +343,27 @@ async function abrirFlujoAdicionales(servicio) {
     const cont = document.getElementById("lista-adicionales");
     cont.innerHTML = "";
     adicionales.forEach(a => {
-      const yaAgregado = carrito.some(it => it.tipo === "adicional" && it.idServicio === a.id);
-      const label = document.createElement("label");
-      label.innerHTML = `<input type="checkbox" value="${a.id}" ${yaAgregado ? "checked" : ""}> ${a.nombre} — ${formatoPrecio(a.precio)}`;
-      const checkbox = label.querySelector("input");
-      checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-          carrito.push({ idServicio: a.id, tipo: "adicional", elecciones: [], adicionales: [] });
-        } else {
-          const idx = carrito.findIndex(it => it.tipo === "adicional" && it.idServicio === a.id);
-          if (idx !== -1) carrito.splice(idx, 1);
-        }
-        guardarCarrito();
-        actualizarBarraCarrito();
-      });
-      cont.appendChild(label);
+      const fila = document.createElement("div");
+      fila.className = "adicional-fila";
+      fila.innerHTML = `
+        <span class="adicional-fila__nombre">${a.nombre} — ${formatoPrecio(a.precio)}</span>
+        <div class="adicional-fila__stepper">
+          <button type="button" class="adicional-fila__btn" aria-label="Quitar uno">−</button>
+          <span class="adicional-fila__cantidad">0</span>
+          <button type="button" class="adicional-fila__btn" aria-label="Agregar uno">+</button>
+        </div>
+      `;
+      const [btnRestar, btnSumar] = fila.querySelectorAll(".adicional-fila__btn");
+      const spanCantidad = fila.querySelector(".adicional-fila__cantidad");
+      const repintar = () => {
+        const cantidad = cantidadAdicionalEnCarrito(a.id);
+        spanCantidad.textContent = cantidad;
+        btnRestar.disabled = cantidad === 0;
+      };
+      btnSumar.addEventListener("click", () => { actualizarCantidadAdicional(a.id, 1); repintar(); });
+      btnRestar.addEventListener("click", () => { actualizarCantidadAdicional(a.id, -1); repintar(); });
+      repintar();
+      cont.appendChild(fila);
     });
     mostrarPaso("paso-adicionales");
   } catch (e) {
