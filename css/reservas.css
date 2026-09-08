@@ -511,11 +511,21 @@ body.pagina-reservas footer {
 .modal-fotos-carrusel {
     position: relative;
     margin-top: 1rem;
+    height: min(55vh, 420px);
+    background: var(--papel-sombra);
+    border: 2px solid var(--tinta);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .modal-fotos-carrusel img {
     max-width: 100%;
-    border: 2px solid var(--tinta);
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     display: block;
 }
 
