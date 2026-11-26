@@ -76,6 +76,7 @@ async function copiarEnSheet(r: any) {
     Nombre_Servicio: i.nombre,
     Precio: i.precio,
     Telefono_Cliente: r.telefono,
+    Contacto: r.telefono,
     Estado: "pendiente",
     Fecha_Creacion: creada,
     Total_Servicios: r.totalServicios,
