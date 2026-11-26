@@ -1,5 +1,5 @@
-const API_BASE = "https://vps-5990632-x.dattaweb.com/webhook/reservas";
-const WHATSAPP_NUMERO = "543814187925";
+const API_BASE = "https://natxchgrtqvhsjfbsymp.supabase.co/functions/v1/reservas";
+const WHATSAPP_NUMERO = "5493814987814";
 const CARRITO_STORAGE_KEY = "party360_carrito";
 const CARRITO_TTL_MIN = 30;
 
