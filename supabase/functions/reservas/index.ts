@@ -80,6 +80,7 @@ async function copiarEnSheet(r: any) {
     Fecha_Creacion: creada,
     Total_Servicios: r.totalServicios,
     Total_Final: r.totalFinal,
+    "Adicional Distancia": r.costoLocalidad,
     Pertenece_A_Combo: "",
   }));
   try {
