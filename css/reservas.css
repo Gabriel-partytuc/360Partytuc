@@ -480,6 +480,17 @@ body.pagina-reservas footer {
     cursor: not-allowed;
 }
 
+.tarjeta-servicio .boton-consultar {
+    background: transparent;
+    color: var(--tinta);
+}
+
+.tarjeta-servicio .boton-consultar:hover {
+    background: var(--celeste-neon, var(--rosa-neon));
+    border-color: var(--celeste-neon, var(--rosa-neon));
+    color: var(--tinta);
+}
+
 /* -------------------------------------------------------------------------
    Modal de fotos
    ------------------------------------------------------------------------- */

@@ -96,13 +96,23 @@ function idsEnCarrito() {
   return ids;
 }
 
+// Servicios "a consultar": no se reservan online, se le manda un mensaje armado al dueño.
+function consultarPorWhatsapp(servicio) {
+  const { fecha, horaDesde, horaHasta, localidad } = datosEvento();
+  const lineas = [`Hola! Quisiera consultar por el servicio "${servicio.nombre}".`];
+  if (fecha) lineas.push(`Fecha del evento: ${fecha}`);
+  if (horaDesde && horaHasta) lineas.push(`Horario: ${horaDesde} a ${horaHasta}`);
+  if (localidad) lineas.push(`Localidad: ${localidad}`);
+  window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(lineas.join("\n"))}`, "_blank", "noopener");
+}
+
 function crearCardServicio(servicio) {
   const enCarrito = idsEnCarrito().has(servicio.id);
   const card = document.createElement("div");
   card.className = "tarjeta-servicio";
   card.tabIndex = 0;
 
-  const badge = servicio.disponible === null
+  const badge = servicio.consultar || servicio.disponible === null
     ? ""
     : `<span class="badge-disponibilidad ${servicio.disponible ? "badge-disponible" : "badge-no-disponible"}">${servicio.disponible ? "Disponible" : "Sin stock"}</span>`;
 
@@ -116,11 +126,13 @@ function crearCardServicio(servicio) {
       ${servicio.duracionMin ? `<p class="tarjeta-servicio__duracion"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>${formatoDuracion(servicio.duracionMin)}</p>` : ""}
       <p class="descripcion">${servicio.descripcion || ""}</p>
       ${badge}
-      <p class="precio">${formatoPrecio(servicio.precio)}</p>
+      <p class="precio">${servicio.consultar ? "Consultar precio" : formatoPrecio(servicio.precio)}</p>
     </div>
-    <button class="boton-agregar" ${enCarrito || servicio.disponible === false ? "disabled" : ""}>
+    ${servicio.consultar
+      ? `<button class="boton-agregar boton-consultar">Consultar por WhatsApp</button>`
+      : `<button class="boton-agregar" ${enCarrito || servicio.disponible === false ? "disabled" : ""}>
       ${enCarrito ? "Ya en el carrito" : "Agregar al carrito"}
-    </button>
+    </button>`}
   `;
 
   const zonaPreview = card.querySelector(".zona-preview");
@@ -135,6 +147,10 @@ function crearCardServicio(servicio) {
   zonaPreview.addEventListener("click", () => mostrarModalFotos(servicio, true));
 
   const boton = card.querySelector(".boton-agregar");
+  if (servicio.consultar) {
+    boton.addEventListener("click", () => consultarPorWhatsapp(servicio));
+    return card;
+  }
   boton.addEventListener("click", () => {
     agregarAlCarrito({ idServicio: servicio.id, tipo: "individual", elecciones: [], adicionales: [] });
     abrirFlujoAdicionales(servicio);

@@ -14,7 +14,8 @@ create table public.servicios (
   duracion_min int not null default 90,
   alquilable_solo boolean not null default true,
   cantidad int not null default 1,
-  fotos text[] not null default '{}'
+  fotos text[] not null default '{}',
+  consultar boolean not null default false -- true: no se reserva online, se consulta por WhatsApp
 );
 
 create table public.adicionales (
@@ -85,10 +86,10 @@ begin
   return jsonb_build_object('combos','[]'::jsonb,'individuales', coalesce((
     select jsonb_agg(jsonb_build_object(
       'id', s.id, 'nombre', s.nombre, 'descripcion', s.descripcion_ia, 'precio', s.precio_base,
-      'categoria', s.categoria, 'alquilableSolo', s.alquilable_solo, 'duracionMin', s.duracion_min,
+      'categoria', s.categoria, 'consultar', s.consultar, 'alquilableSolo', s.alquilable_solo, 'duracionMin', s.duracion_min,
       'stockDisponible', greatest(s.cantidad - coalesce(r.n,0), 0),
-      'disponible', case when chequear then greatest(s.cantidad - coalesce(r.n,0),0) > 0 else null end,
-      'fotos', to_jsonb(s.fotos)) order by s.ctid)
+      'disponible', case when chequear and not s.consultar then greatest(s.cantidad - coalesce(r.n,0),0) > 0 else null end,
+      'fotos', to_jsonb(s.fotos)) order by s.consultar, s.ctid)
     from public.servicios s
     left join lateral (
       select count(*) n from public.reserva_items i join public.reservas rv on rv.id_reserva = i.id_reserva
@@ -135,7 +136,7 @@ begin
       v_items := v_items || jsonb_build_object('id', a.id, 'nombre', a.nombre, 'tipo', 'adicional', 'precio', a.precio_extra);
       v_total := v_total + a.precio_extra; v_extra := v_extra + a.duracion_min;
     else
-      select * into s from public.servicios where id = it->>'idServicio' and activo and categoria = 'Individual';
+      select * into s from public.servicios where id = it->>'idServicio' and activo and not consultar and categoria = 'Individual';
       if not found then v_sin := v_sin || coalesce(it->>'idServicio','?'); continue; end if;
       if s.id = any(v_ids) then continue; end if;
       v_ids := v_ids || s.id;
