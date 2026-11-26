@@ -11,8 +11,9 @@
  *  4. Copiar la URL terminada en /exec (es SHEETS_WEBHOOK_URL en Supabase).
  *
  * Las columnas se mapean por el nombre del encabezado de la fila 1, asi que el
- * orden no importa. Para guardar el nombre del cliente, agregar una columna
- * "Nombre_Cliente" en la hoja; si no existe, ese dato simplemente se omite.
+ * orden no importa. El nombre del cliente va en la columna "Cliente" (o
+ * "Nombre_Cliente" si se la renombra). Las columnas que la web no envia
+ * (Contacto, Adicional Distancia, Fecha_Vencimiento) quedan vacias.
  * Cada vez que se cambia este codigo hay que crear una NUEVA version de la implementacion.
  */
 const NOMBRE_HOJA = "Reservas";
@@ -34,7 +35,7 @@ function doPost(e) {
     const encabezados = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0];
     const valores = filas.map(function (f) {
       return encabezados.map(function (h) {
-        const v = f[h];
+        const v = f[h === "Cliente" ? "Nombre_Cliente" : h];
         // Evita que Sheets interprete como formula un texto que empiece con = + - @
         return typeof v === "string" && /^[=+\-@]/.test(v) ? "'" + v : (v === undefined ? "" : v);
       });
