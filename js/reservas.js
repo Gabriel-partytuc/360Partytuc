@@ -30,6 +30,11 @@ function formatoPrecio(n) {
   return "$" + Number(n || 0).toLocaleString("es-AR");
 }
 
+// Escapa texto antes de insertarlo con innerHTML (los datos vienen del backend, pero no se confía en ellos).
+function escaparHtml(texto) {
+  return String(texto ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
 function formatoDuracion(min) {
   const m = Number(min) || 0;
   if (m <= 0) return "";
@@ -122,9 +127,9 @@ function crearCardServicio(servicio) {
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
         Ver fotos
       </button>
-      <h3>${servicio.nombre}</h3>
+      <h3>${escaparHtml(servicio.nombre)}</h3>
       ${servicio.duracionMin ? `<p class="tarjeta-servicio__duracion"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>${formatoDuracion(servicio.duracionMin)}</p>` : ""}
-      <p class="descripcion">${servicio.descripcion || ""}</p>
+      <p class="descripcion">${escaparHtml(servicio.descripcion)}</p>
       ${badge}
       <p class="precio">${servicio.consultar ? "Consultar precio" : formatoPrecio(servicio.precio)}</p>
     </div>
@@ -349,7 +354,7 @@ function renderDrawerCarrito() {
     }
     const div = document.createElement("div");
     div.className = "item-carrito";
-    div.innerHTML = `<span>${nombre}</span><button class="quitar">&times;</button>`;
+    div.innerHTML = `<span>${escaparHtml(nombre)}</span><button class="quitar">&times;</button>`;
     div.querySelector(".quitar").addEventListener("click", () => quitarDelCarrito(idx));
     lista.appendChild(div);
   });
@@ -357,7 +362,7 @@ function renderDrawerCarrito() {
     const nombre = adicionalesInfo[id]?.nombre || id;
     const div = document.createElement("div");
     div.className = "item-carrito";
-    div.innerHTML = `<span>${nombre}${cantidad > 1 ? ` ×${cantidad}` : ""}</span><button class="quitar">&times;</button>`;
+    div.innerHTML = `<span>${escaparHtml(nombre)}${cantidad > 1 ? ` ×${cantidad}` : ""}</span><button class="quitar">&times;</button>`;
     div.querySelector(".quitar").addEventListener("click", () => {
       actualizarCantidadAdicional(id, -1);
       renderDrawerCarrito();
@@ -369,7 +374,7 @@ function renderDrawerCarrito() {
   if (costoLocalidad > 0) {
     const div = document.createElement("div");
     div.className = "item-carrito";
-    div.innerHTML = `<span>Adicional por distancia (${document.getElementById("localidad").value})</span><span>${formatoPrecio(costoLocalidad)}</span>`;
+    div.innerHTML = `<span>Adicional por distancia (${escaparHtml(document.getElementById("localidad").value)})</span><span>${formatoPrecio(costoLocalidad)}</span>`;
     lista.appendChild(div);
   }
   document.getElementById("drawer-total").textContent = formatoPrecio(totalCarritoEstimado());
@@ -411,7 +416,7 @@ async function abrirFlujoAdicionales(servicio) {
       const fila = document.createElement("div");
       fila.className = "adicional-fila";
       fila.innerHTML = `
-        <span class="adicional-fila__nombre">${a.nombre} — ${formatoPrecio(a.precio)}</span>
+        <span class="adicional-fila__nombre">${escaparHtml(a.nombre)} — ${formatoPrecio(a.precio)}</span>
         <div class="adicional-fila__stepper">
           <button type="button" class="adicional-fila__btn" aria-label="Quitar uno">−</button>
           <span class="adicional-fila__cantidad">0</span>
@@ -469,13 +474,21 @@ async function confirmarReserva() {
     const res = await fetch(`${API_BASE}/confirmar-reserva`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fecha, horaDesde, direccion, localidad, telefono, nombre, carrito })
+      body: JSON.stringify({ fecha, horaDesde, direccion, localidad, telefono, nombre, carrito, sitioWeb: document.getElementById("sitioWeb").value })
     });
     const data = await res.json();
 
     if (res.status === 409 || data.disponible === false) {
-      mostrarErrorConfirmacion("Uno de los servicios elegidos ya no tiene disponibilidad para ese horario. Volvé a revisar el catálogo.");
-      cargarCatalogo();
+      if (data.itemsSinStock) {
+        mostrarErrorConfirmacion("Uno de los servicios elegidos ya no tiene disponibilidad para ese horario. Volvé a revisar el catálogo.");
+        cargarCatalogo();
+      } else {
+        mostrarErrorConfirmacion(data.error || "Revisá los datos e intentá de nuevo.");
+      }
+      return;
+    }
+    if (!res.ok) {
+      mostrarErrorConfirmacion(data.error || "Hubo un error al confirmar la reserva. Probá de nuevo o escribinos por WhatsApp.");
       return;
     }
 

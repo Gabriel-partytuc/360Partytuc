@@ -14,6 +14,19 @@ function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 }
 
+// IP del cliente, hasheada (no se guarda la IP en claro) para el limitador de intentos.
+async function claveIp(req: Request): Promise<string> {
+  const ip = req.headers.get("cf-connecting-ip") || (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "desconocida";
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip));
+  return Array.from(new Uint8Array(buf)).slice(0, 12).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function permitido(clave: string, max: number, ventanaSeg: number): Promise<boolean> {
+  const { data, error } = await db.rpc("api_rate_limit", { p_clave: clave, p_max: max, p_ventana_seg: ventanaSeg });
+  if (error) throw error;
+  return data === true;
+}
+
 const peso = (n: number) => "$" + Number(n || 0).toLocaleString("es-AR");
 
 function mensajeWhatsapp(r: any) {
@@ -127,8 +140,19 @@ Deno.serve(async (req) => {
     }
 
     if (req.method === "POST" && ruta === "confirmar-reserva") {
-      const body = await req.json();
-      const { data, error } = await db.rpc("api_crear_reserva", { p: body });
+      let body: any;
+      try { body = await req.json(); } catch { return json({ error: "JSON invalido" }, 400); }
+      if (!body || typeof body !== "object" || Array.isArray(body)) return json({ error: "Solicitud invalida" }, 400);
+      // Campo trampa: los bots lo completan, las personas no lo ven. Se responde "ok" sin guardar nada.
+      if (typeof body.sitioWeb === "string" && body.sitioWeb.trim() !== "") {
+        return json({ idReserva: "RES-0000", totalFinal: 0, mensajeWhatsapp: "Hola!", estado: "pendiente" });
+      }
+      // Limites: 5 reservas por hora por IP y 100 por hora en total.
+      const ip = await claveIp(req);
+      if (!(await permitido("res:" + ip, 5, 3600)) || !(await permitido("res:global", 100, 3600))) {
+        return json({ error: "Demasiados intentos. Probá de nuevo más tarde o escribinos por WhatsApp." }, 429);
+      }
+      const { data, error } = await db.rpc("api_crear_reserva_validado", { p: body });
       if (error) throw error;
       if (!data.disponible) return json(data, 409);
       data.mensajeWhatsapp = mensajeWhatsapp(data);

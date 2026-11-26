@@ -43,7 +43,7 @@ State model:
 
 ### Access gate (`js/validacion-acceso.js`)
 
-Both `acceso-clientes.html` and the (stub) comercio page validate an ID by fetching a published Google Sheet as CSV (`URL_CLIENTES` / `URL_COMERCIOS`, published via `docs.google.com/.../pub?output=csv`) and doing a naive `split(",")` row scan for a matching ID in column A, then opening a Drive folder link from a fixed column index. This is intentionally low-tech (no backend) — if you change the sheet's column order, the hardcoded column indices (`fila[6]` for clients, `fila[4]` for comercio) must be updated to match.
+`acceso-clientes.html` (and the stub comercio page) POST `{tipo: "cliente"|"comercio", id}` to the Supabase Edge Function `acceso`, which looks the ID up in the closed tables `clientes` / `comercios` and returns the Drive folder link (`enlace`) if it exists. The lists of IDs and links are no longer public (they used to be published Google Sheets CSVs). The function rate-limits by hashed IP (10 attempts / 10 min, 100 global). To add or change a client or partner, edit the table in the Supabase Table Editor. Source: `supabase/functions/acceso/index.ts`; schema in `supabase/schema.sql`.
 
 ## Conventions
 

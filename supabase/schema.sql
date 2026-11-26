@@ -182,3 +182,80 @@ revoke all on function public.api_catalogo(date,text,text) from public, anon, au
 revoke all on function public.api_crear_reserva(jsonb) from public, anon, authenticated;
 grant execute on function public.api_catalogo(date,text,text) to service_role;
 grant execute on function public.api_crear_reserva(jsonb) to service_role;
+
+-- ---------------------------------------------------------------------------
+-- Acceso de clientes y comercios (reemplaza los CSV publicos de Google Sheets)
+-- Se cargan/editan desde el Table Editor de Supabase. Usadas por la Edge Function `acceso`.
+-- ---------------------------------------------------------------------------
+create table public.clientes (
+  id_cliente text primary key,
+  nombre_evento text not null default '',
+  nombre_cliente text not null default '',
+  id_contrato text not null default '',
+  lugar_evento text not null default '',
+  whatsapp text not null default '',
+  link_descarga text not null default '',
+  orden text not null default ''
+);
+create table public.comercios (
+  id_comercio text primary key,
+  nombre_comercio text not null default '',
+  domicilio text not null default '',
+  telefono text not null default '',
+  enlace_carpeta text not null default ''
+);
+alter table public.clientes enable row level security;
+alter table public.comercios enable row level security;
+
+-- Limitador de intentos por clave (IP hasheada + tipo)
+create table public.rate_limit (
+  clave text primary key,
+  n int not null,
+  ventana_inicio timestamptz not null
+);
+alter table public.rate_limit enable row level security;
+
+create or replace function public.api_rate_limit(p_clave text, p_max int, p_ventana_seg int)
+returns boolean language plpgsql set search_path = public as $$
+declare v_n int;
+begin
+  delete from public.rate_limit where ventana_inicio < now() - interval '1 day';
+  insert into public.rate_limit as r (clave, n, ventana_inicio) values (p_clave, 1, now())
+  on conflict (clave) do update set
+    n = case when r.ventana_inicio < now() - make_interval(secs => p_ventana_seg) then 1 else r.n + 1 end,
+    ventana_inicio = case when r.ventana_inicio < now() - make_interval(secs => p_ventana_seg) then now() else r.ventana_inicio end
+  returning n into v_n;
+  return v_n <= p_max;
+end $$;
+
+-- Devuelve el link de la carpeta si el ID existe, o null
+create or replace function public.api_acceso(p_tipo text, p_id text)
+returns text language plpgsql stable set search_path = public as $$
+declare v text;
+begin
+  if p_id is null or btrim(p_id) = '' or length(p_id) > 100 then return null; end if;
+  if p_tipo = 'cliente' then
+    select nullif(btrim(link_descarga), '') into v from public.clientes where id_cliente = btrim(p_id);
+  elsif p_tipo = 'comercio' then
+    select nullif(btrim(enlace_carpeta), '') into v from public.comercios where id_comercio = btrim(p_id);
+  end if;
+  return v;
+end $$;
+
+-- Validacion de telefono antes de crear la reserva
+create or replace function public.api_crear_reserva_validado(p jsonb)
+returns jsonb language plpgsql set search_path = public as $$
+declare v_tel text := btrim(coalesce(p->>'telefono',''));
+begin
+  if v_tel !~ '^[0-9+()\s.-]{6,25}$' or length(regexp_replace(v_tel, '\D', '', 'g')) < 6 then
+    return jsonb_build_object('disponible', false, 'error', 'Telefono invalido');
+  end if;
+  return public.api_crear_reserva(p);
+end $$;
+
+revoke all on function public.api_rate_limit(text,int,int) from public, anon, authenticated;
+revoke all on function public.api_acceso(text,text) from public, anon, authenticated;
+revoke all on function public.api_crear_reserva_validado(jsonb) from public, anon, authenticated;
+grant execute on function public.api_rate_limit(text,int,int) to service_role;
+grant execute on function public.api_acceso(text,text) to service_role;
+grant execute on function public.api_crear_reserva_validado(jsonb) to service_role;
