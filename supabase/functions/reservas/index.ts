@@ -55,6 +55,45 @@ async function avisarTelegram(r: any) {
   }
 }
 
+// Copia la reserva en la planilla de Google Sheets via un Apps Script (ver
+// supabase/apps-script/reservas-sheet.gs). Se activa solo si estan cargados los
+// secretos SHEETS_WEBHOOK_URL y SHEETS_WEBHOOK_TOKEN; si faltan o falla, no afecta la reserva.
+// La copia es de una sola via: Supabase es la fuente de verdad.
+async function copiarEnSheet(r: any) {
+  const url = Deno.env.get("SHEETS_WEBHOOK_URL");
+  const token = Deno.env.get("SHEETS_WEBHOOK_TOKEN");
+  if (!url || !token) return;
+  const creada = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" });
+  const filas = (r.items as any[]).map((i) => ({
+    ID_Reserva: r.idReserva,
+    Fecha_Evento: r.fecha,
+    Hora_Desde: r.horaDesde,
+    Hora_Hasta: r.horaHasta,
+    Nombre_Cliente: r.nombre,
+    Direccion: r.direccion,
+    Localidad: r.localidad,
+    ID_Servicio: i.id,
+    Nombre_Servicio: i.nombre,
+    Precio: i.precio,
+    Telefono_Cliente: r.telefono,
+    Estado: "pendiente",
+    Fecha_Creacion: creada,
+    Total_Servicios: r.totalServicios,
+    Total_Final: r.totalFinal,
+    Pertenece_A_Combo: "",
+  }));
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, filas }),
+    });
+    if (!res.ok) console.error("Sheets respondio", res.status, await res.text());
+  } catch (e) {
+    console.error("Error copiando a Sheets", e);
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
   const ruta = new URL(req.url).pathname.replace(/\/+$/, "").split("/").pop();
@@ -92,7 +131,7 @@ Deno.serve(async (req) => {
       if (!data.disponible) return json(data, 409);
       data.mensajeWhatsapp = mensajeWhatsapp(data);
       data.estado = "pendiente";
-      await avisarTelegram(data);
+      await Promise.all([avisarTelegram(data), copiarEnSheet(data)]);
       return json({ idReserva: data.idReserva, totalFinal: data.totalFinal, mensajeWhatsapp: data.mensajeWhatsapp, estado: data.estado });
     }
 
